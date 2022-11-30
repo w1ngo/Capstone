@@ -1,22 +1,19 @@
 #!/bin/bash
 
 # This script is written in bash, tested on a Debian VM hosted on WSL 2 for Windows 10 Pro
-#   on a 64-
+#   on a 64-bit machine. It is meant to run on a Raspberry Pi 4 with a Raspbian OS, which
+#   resembles a stripped-down version of the Debian Linux distribution.
 # 
+# This script may one day be replaced by Python script(s) entirely, however it currently
+#   is meant to be the main environment from which all operations originate for our
+#   specific project. Python functions are referenced from within this shell script
+#   to perform different operations and give values, while this script handles the
+#   user interface and basic file operations.
 # 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
+# This script is meant to ease the process of using the bash terminal for an operator
+#   uninterested in learning and remembering bash commands to navigate the file
+#   system and the terminal. It is for this reason that basic commands, such as 
+#   ls, are offered as functions to select.
 
 echo "Initializing terminal interface..."
 echo ""
