@@ -1,7 +1,10 @@
+#!/usr/bin/python3
 '''
 This script stores the functions needed to operate the gravitometer-related functions
     for the overall project. This includes motor control, load cell input interpretation, etc
 '''
+
+import RPI.GPIO as gpio
 
 
 '''
@@ -32,3 +35,10 @@ def read_load_cell( calibrated_zero ):
     #ENDOF: read_load_cell()
 
 
+'''
+
+'''
+def record_data():
+
+    return
+    #ENDOF: record_data()
