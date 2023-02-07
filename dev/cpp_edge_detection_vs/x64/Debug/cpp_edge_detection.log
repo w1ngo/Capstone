@@ -1,7 +1,0 @@
-﻿  cpp_edge_detection.cpp
-C:\Users\Holden\OneDrive\Documents\SCHOOL\TAMU\YEAR_5\Capstone\cpp_edge_detection\refine_parameters.h(127,40): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-  cpp_edge_detection.obj : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
-LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
-  Generating code
-  Finished generating code
-  cpp_edge_detection.vcxproj -> C:\Users\Holden\OneDrive\Documents\SCHOOL\TAMU\YEAR_5\Capstone\cpp_edge_detection\x64\Debug\cpp_edge_detection.exe
