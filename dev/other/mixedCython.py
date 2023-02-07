@@ -16,7 +16,7 @@ if __name__ == "__main__":
     func.greater.argtypes = [ctypes.c_int, ctypes.c_int]
 
     print( func.add(1, 2, 3) )
-    print( func.greater( 3, 7) )
+    print( func.greater( 3, 7 ) )
 
 
     

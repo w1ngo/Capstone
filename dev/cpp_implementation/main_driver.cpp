@@ -13,8 +13,8 @@ int main(int argc, char *argv[]) {
     Mat one = process_image( filename, true, true, 200, 20 );
     Mat two = process_image( filename, true, false, 175, 60 );
 
-    namedWindow( "Image 1", WINDOW_NORMAL ); imshow("Image 1", one); waitKey(0);
-    namedWindow( "Image 2", WINDOW_NORMAL ); imshow("Image 2", two); waitKey(0);
+    namedWindow( "Image 1",  WINDOW_NORMAL ); imshow("Image 1",   one); waitKey(0);
+    namedWindow( "Image 2",  WINDOW_NORMAL ); imshow("Image 2",   two); waitKey(0);
     destroyAllWindows();
 
     namedWindow( "Combined", WINDOW_NORMAL ); imshow( "Combined", one ^ two ); waitKey(0);
