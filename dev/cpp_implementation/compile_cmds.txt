@@ -5,3 +5,7 @@ need to pass some extra information to the linker as well about what libraries t
 example build command:
 	g++ <.cpp source> -o <executable name> -I /usr/local/include/opencv4
 	g++ main_driver.cpp -o edge_detect -I /usr/local/include/opencv4 -lopencv_core -lopencv_imgcodecs -lopencv_imgproc -lopencv_highgui
+
+to build shared library for python access:
+	g++ -fPIC -shared main_driver.cpp -o edge_detect.so -I /usr/local/include/opencv4 -lopencv_core -lopencv_imgcodecs -lopencv_imgproc -lopencv_highgui
+

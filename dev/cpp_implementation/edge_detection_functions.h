@@ -37,12 +37,14 @@ Mat process_image(const std::string filename, const bool gauss_filter, const boo
     return img;
 }
 
-Mat voting_process(const std::string filename, const uint32_t parameters[], const int num_params) {
-    Mat img;
+Mat voting_process(const std::string filename, const uint32_t lthresh[], const uint32_t hthresh[], const bool gauss[], const bool median[], const int num_params) {
+    Mat img[num_params], ret;
 
+    for(int i = 0; i < num_params; i++) { img[i] = process_image( filename, gauss[i], median[i], lthresh[i], hthresh[i] ); }
 
+    
 
-    return img;
+    return ret;
 }
 
 #endif
