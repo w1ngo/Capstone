@@ -53,7 +53,6 @@ In order to determine LWH measurements, the orientation of the potato must be
 	focal plane. The algorithm used to determine the orientation of an object is
 	based in trigonometry.
 
-<<<<<<< HEAD
 Alternatively, another approach has been identified that uses something called the
 	minimum rectangle. In short, once the edges have been detected, an algorithm
 	can be applied to identify the rectangle with the smallest area that bounds
@@ -65,12 +64,7 @@ Alternatively, another approach has been identified that uses something called t
 
 After identifying the edges and the orientation of the potato, all that is left is
 	the conversion from pixel spread to SI units for each dimension. Reasearch
-	has been done into linear algebra conversions for slight inaccuracies (due to 
-=======
-After identifying the edges and the orientation of the potato, all that is left is
-	the conversion from pixel spread to SI units for each dimension. Reasearch
 	has been done into linalg conversions for slight inaccuracies (due to 
->>>>>>> e2462de3c1316b7676b1988d73e8bcb7efbcf0dd
 	camera angle, relative closeness to the subject of the image, etc.),
 	but these will not be applied unless testing shows our precision is lacking.
 
