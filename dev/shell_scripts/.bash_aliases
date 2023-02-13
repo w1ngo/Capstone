@@ -1,6 +1,0 @@
-alias ls='ls --color=auto'
-alias lsa='clear; ls -a; echo'
-alias ..='cd ..'
-alias clear='clear; clear'
-alias python='python3'
-alias py='python3'
