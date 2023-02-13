@@ -22,14 +22,14 @@ After that, it moves onto comparisons between two sets. The better pair can be c
     This process happens recursively, shuffling the order after each pass, until
     the total # of param sets falls at or below 10.
 '''
-def refine(filenames):
+def refine(filenames, init_param_file="param_refine.txt"):
     ls     = []
     data   = []
     params = []
 
     # read in desired parameters from the master file
     # one pair (low, high) is located on each line of the file
-    with open("param_refine.txt", "r") as file:
+    with open(init_param_file, "r") as file:
         for line in file:
             tmp = line.split()
             params.append( [int(tmp[0]), int(tmp[1])] )
@@ -39,9 +39,8 @@ def refine(filenames):
             # find the edges of the images at <filenames> and determine
             # if the parameter pair is good or not (write to file iff yes)
         for pair in params:
-            file = open( f"param_refine_1.txt", "a+" )
             for filename in filenames:
-                img = funcs.execute( True, True, pair[0], pair[1], False, filename )
+                img = funcs.edge_detect( True, True, pair[0], pair[1], False, filename )
                 cv2.namedWindow( f"{pair[0]} {pair[1]}", cv2.WINDOW_NORMAL )
                 cv2.imshow( f"{pair[0]} {pair[1]}", img )
                 cv2.waitKey(1000)
@@ -50,8 +49,10 @@ def refine(filenames):
             if input("y for yes, n for no: ") == 'y':
                 ls.append( img )
                 data.append( [pair[0], pair[1]] )
+                
+                file = open( f"param_refine_1.txt", "a+" )
                 file.write( f"{pair[0]} {pair[1]}\n" )
-            file.close()
+                file.close()
             
     else:
 
@@ -65,8 +66,7 @@ def refine(filenames):
             # find the edges of the image at <filename> and determine
             # if the parameter pair is good or not (write to file iff yes)
         for pair in params:
-            file = open( f"param_refine_1_{filename}.txt", "a+" )
-            img = funcs.execute( True, True, pair[0], pair[1], False, filename )
+            img = funcs.edge_detect( True, True, pair[0], pair[1], False, filename )
             cv2.namedWindow( f"{pair[0]} {pair[1]}", cv2.WINDOW_NORMAL )
             cv2.imshow( f"{pair[0]} {pair[1]}", img )
             cv2.waitKey(1000)
@@ -75,8 +75,9 @@ def refine(filenames):
             if input("y for yes, n for no: ") == 'y':
                 ls.append( img )
                 data.append( [pair[0], pair[1]] )
+                file = open( f"param_refine_1_{filename}.txt", "a+" )
                 file.write( f"{pair[0]} {pair[1]}\n" )
-            file.close()
+                file.close()
 
     print( "\tInitial pass complete, running through again now" )
 
@@ -101,7 +102,9 @@ def refine_recurs(ls = [], data = []):
     # open a new file, labeled with the number of parameter pairs present
         # at the time of the fxn call, in order to track process instead of
         # simply overwriting
-    file = open( f"param_refine_len{len(ls)}.txt", "w+" )
+    file = open( f"param_refine_len{len(ls)}.txt", "w" )
+    file.close()
+    
     for idx in range( len(ls) - 1 ):
         # this line prevents out-of-bounds caused by the list shrinking during
             # operation
@@ -123,16 +126,19 @@ def refine_recurs(ls = [], data = []):
             ls.pop( idx + 1 )
             data.remove( data[idx + 1] )
         else:
+            file = open( f"param_refine_len{len(ls)}.txt", "a+" )
             file.write( f"{data[idx][0]} {data[idx][1]}\n" )
+            file.close()
 
         if choice & 1 == 0:
             ls.pop( idx )
             data.remove( data[idx] )
         else:
+            file = open( f"param_refine_len{len(ls)}.txt", "a+" )
             file.write(f"{data[idx + 1][0]} {data[idx][1]}\n")
+            file.close()
 
         print( f"\t{idx}/{len(ls)}" )
-    file.close()
     
     # shuffle the order of elements in the list before recursive call
     tmp = list( zip(ls, data) )
@@ -141,3 +147,47 @@ def refine_recurs(ls = [], data = []):
     
     return refine( ls, data )
 
+'''
+This serves to perform the refining process with multiple images
+    rather than a single image. This was attempted before, but
+    after the initial pass, parameters were compared based on
+    their performance on a single image only. This will allow
+    each param set to be used on each image, and rejected if
+    they fail on ANY.
+'''
+def multi_refine(filename_ls):
+    param_file = "param_refine.txt"
+    
+    for idx, img_filename in enumerate(filename_ls):
+        params = []
+
+        # read in desired parameters from the master file
+            # one pair (low, high) is located on each line of the file
+        with open(param_file, "r") as file:
+            for line in file:
+                tmp = line.split()
+                params.append( [int(tmp[0]), int(tmp[1])] )
+
+        # open a new file to track accepted param pairs
+        file = open( f"param_refine_{idx}.txt", "w" )
+        file.close()
+
+        # using each set of parameters read from the master file,
+            # find the edges of the image at <filename> and determine
+            # if the parameter pair is good or not (write to file iff yes)
+        for pair in params:
+            img = funcs.edge_detect( True, True, pair[0], pair[1], False, img_filename )
+            cv2.namedWindow( f"{pair[0]} {pair[1]}", cv2.WINDOW_NORMAL )
+            cv2.imshow( f"{pair[0]} {pair[1]}", img )
+            cv2.waitKey(1000)
+            cv2.destroyAllWindows()
+
+            # If this param pair is accepted, open current file and record
+            if input("y for yes, n for no: ") == 'y':
+                file = open( f"param_refine_{idx}.txt", "a+" )
+                file.write( f"{pair[0]} {pair[1]}\n" )
+                file.close()
+
+        param_file = f"param_refine_{idx}.txt"
+        print( f"Pass with image at {img_filename} complete.\n\n" )
+    print( "Refining completed" )

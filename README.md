@@ -91,3 +91,14 @@ For some reason during testing, it has been noted that .pngs take longer to proc
 	or something inherent in the testing protocol at this moment, but it is something
 	to be aware of.
 
+The edge detection functionality is built with several assumptions, and usage of it
+	should keep this in mind. Things such as large shadows, in its current state,
+	can drastically affect the performance of it. With this in mind, it should
+	be used only in a configuration where lighting can be controlled/moderated
+	if possible. Fixes can certainly be applied, but will not if proven
+	unnecessary.
+
+Testing was done on .jpg and .png filetypes. For some reason, .png files took
+	noticeably longer to process, at no noteable increase in accuracy. It
+	was not a long wait, simply longer than the time needed for .jpgs. For
+	that reason, .jpg will likely be the desired filetype for processing images.
