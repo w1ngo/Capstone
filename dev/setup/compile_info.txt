@@ -1,7 +1,0 @@
-include path (-I flag on gcc): /usr/local/include/opencv4
-
-need to pass some extra information to the linker as well about what libraries to include
-
-example build command:
-	g++ <.cpp source> -o <executable name> -I /usr/local/include/opencv4
-	g++ main_driver.cpp -o edge_detect -I /usr/local/include/opencv4 -lopencv_core -lopencv_imgcodecs -lopencv_imgproc -lopencv_highgui

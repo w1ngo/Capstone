@@ -58,15 +58,12 @@ The approach taken to find the orientation/measurements uses something called th
 	pixels are missing.
 
 The above step is applied to the edge detector outputs (for each set of parameters).
-	The minimum rectangles are then compiled using a basic statistical approach.
-	Generally, the original image is superimposed with all of the resultant 
-	minimum rectangels. Any region that is above a certain confidence interval
-	as including a potato will be accepted. If there is a region that falls below
-	the confidence interval (e.g. only one parameter set shows the region to be
-	part of the potato), then it will be rejected. After computing the intersection
-	of area unions, the dimensions of the resultant region can be trivially computed.
+	The minimum rectangles are then compiled using a basic averaging technique. There 
+	is another statistical approach that has been researched and can be taken should
+	more accuracy be needed in the future using an intersection of confidence regions,
+	however averaging the outputs of tested parameters is the approach taken currently.
 
-After identifying the region containing the potato as described above, all that is left is
+After identifying the bounds of the potato as described above, all that is left is
 	the conversion from pixel spread to SI units for each dimension. Reasearch
 	has been done into linalg conversions for slight inaccuracies (due to 
 	camera angle, relative closeness to the subject of the image, etc.),
@@ -102,3 +99,10 @@ Testing was done on .jpg and .png filetypes. For some reason, .png files took
 	noticeably longer to process, at no noteable increase in accuracy. It
 	was not a long wait, simply longer than the time needed for .jpgs. For
 	that reason, .jpg will likely be the desired filetype for processing images.
+
+Speed has not been an issue after basic optimization techniques were implemented.
+	Charts were made to identify "hot spots," and one major loop was reduced 
+	significantly, cutting the single-image full processing stage from over 
+	thirty seconds to mere fractions of a second. This confirms our initial
+	assumption that the code can run serially, and should not need to get
+	around Python's GIL for multithreading.
