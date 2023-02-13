@@ -1,0 +1,11 @@
+61 91
+data[idx + 1][0] 71
+31 71
+data[idx + 1][0] 71
+data[idx + 1][0] 71
+21 61
+11 81
+data[idx + 1][0] 81
+data[idx + 1][0] 81
+data[idx + 1][0] 81
+data[idx + 1][0] 91

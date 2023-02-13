@@ -3,6 +3,25 @@ import detection_functions as funcs
 import random
 
 
+'''
+This function is meant to train a dataset of useful parameters. There are a large
+    number of possible param combos to use for edge detection, but most are not
+    useful. The process of paring down potential candidate sets is time-intensive
+    but useful.
+
+It can accept a list of filenames, or a single filename, meant to point at an image
+    of a potato.
+
+The initial pass is a simple yes/no. It shows the result of the image processed under
+    a specific set of parameters, and either stores the param pair or skips it.
+
+After that, it moves onto comparisons between two sets. The better pair can be chosen,
+    or both pairs can be stored if they perform well (additionally both can be removed,
+    but this should not occur after the initial pass)
+    
+    This process happens recursively, shuffling the order after each pass, until
+    the total # of param sets falls at or below 10.
+'''
 def refine(filenames):
     ls     = []
     data   = []
@@ -14,7 +33,6 @@ def refine(filenames):
         for line in file:
             tmp = line.split()
             params.append( [int(tmp[0]), int(tmp[1])] )
-
 
     if type(filenames) is list:
         # using each set of parameters read from the master file,
@@ -72,7 +90,9 @@ def refine(filenames):
     # send to the recursive function to compare param sets 1-on-1
     return refine_recurs( ls, data )
 
-
+'''
+This is the recursvie stage of the main refine() function
+'''
 def refine_recurs(ls = [], data = []):
     # base case
     if len(ls) <= 10:
@@ -109,7 +129,7 @@ def refine_recurs(ls = [], data = []):
             ls.pop( idx )
             data.remove( data[idx] )
         else:
-            file.write(f"data[idx + 1][0] {data[idx][1]}\n")
+            file.write(f"{data[idx + 1][0]} {data[idx][1]}\n")
 
         print( f"\t{idx}/{len(ls)}" )
     file.close()
@@ -119,5 +139,5 @@ def refine_recurs(ls = [], data = []):
     random.shuffle( tmp )
     ls, data = zip( *tmp )
     
-    return refine( ls, data, ctr + 1 )
+    return refine( ls, data )
 

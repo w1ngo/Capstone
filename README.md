@@ -41,28 +41,32 @@ For our specific application, a light Gaussian blur was all that was needed, but
 Rather than having a single, finely-tuned edge detection function based on sample data,
 	a more general approach has been chosen. Several sets of parameters that
 	generally perform well will be used, and they will be used in conjunction
-	with one another to arrive at a single, final result. It is unclear
-	whether or not this will be in an "average the final answer" or 
-	"vote on edge pixels" context, and that decision will be made during
-	testing.
+	with one another to arrive at a single, final result. The specific way that
+	this will occur is described below.
 
-In order to determine LWH measurements, the orientation of the potato must be
-	derived from its outline. Without getting an angle/axes, the measurements
-	can only be max x-spread and max y-spread, which will yield inaccurate
-	results for potatoes that are placed askew from the axes of the camera's
-	focal plane. The algorithm used to determine the orientation of an object is
-	based in trigonometry.
-
-Alternatively, another approach has been identified that uses something called the
+The approach taken to find the orientation/measurements uses something called the
 	minimum rectangle. In short, once the edges have been detected, an algorithm
 	can be applied to identify the rectangle with the smallest area that bounds
 	all of the edge points. As we only need the x and y dimensions, the dimensions
 	of this rectangle will give the exact dimensions that we are looking for. This
 	solves some potential issues with noise on the interior of the potato, should
 	the noise-reduction solutions hinted at above not work as consistently as
-	expected.
+	expected. **NOTE** this is extremely sensitive to contours that are not fully
+	joined, and the output of the edge detection stage alone is clear to the 
+	human eye, but not the computer. Therefore, a light Gaussian Blur is
+	applied once more in order to join edges together when small numbers of 
+	pixels are missing.
 
-After identifying the edges and the orientation of the potato, all that is left is
+The above step is applied to the edge detector outputs (for each set of parameters).
+	The minimum rectangles are then compiled using a basic statistical approach.
+	Generally, the original image is superimposed with all of the resultant 
+	minimum rectangels. Any region that is above a certain confidence interval
+	as including a potato will be accepted. If there is a region that falls below
+	the confidence interval (e.g. only one parameter set shows the region to be
+	part of the potato), then it will be rejected. After computing the intersection
+	of area unions, the dimensions of the resultant region can be trivially computed.
+
+After identifying the region containing the potato as described above, all that is left is
 	the conversion from pixel spread to SI units for each dimension. Reasearch
 	has been done into linalg conversions for slight inaccuracies (due to 
 	camera angle, relative closeness to the subject of the image, etc.),
@@ -74,4 +78,16 @@ Data storage is done using a .csv filetype and written to a flashdrive connected
 	time, a .swp file will be used to avoid corrupting the main file, and 
 	files will be kept closed as much as possible.
 
+_____________________________________________________________________________________
+Things to keep in mind
+
+Due to the highly specified application of the edge detection software, deviations in
+	application will have noteably adverse effects on performance. For example,
+	inconsistent lighting resulting in large or notable shadows will cause
+	reliably inaccurate readings.
+
+For some reason during testing, it has been noted that .pngs take longer to process
+	than .jpgs. It is not certain whether this is due to the nature of the filetype
+	or something inherent in the testing protocol at this moment, but it is something
+	to be aware of.
 
