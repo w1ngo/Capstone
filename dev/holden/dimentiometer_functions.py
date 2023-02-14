@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 '''
 This file stores the functions needed for the dimentiometer to function properly.
     Associated functions include motor controls for the trapdoor, camera controls,
@@ -7,7 +6,6 @@ This file stores the functions needed for the dimentiometer to function properly
 '''
 
 import RPI.GPIO as gpio
-import computer_vision_functions as cviz
 
 
 '''

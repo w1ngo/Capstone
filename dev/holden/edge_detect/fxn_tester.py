@@ -27,7 +27,5 @@ if __name__ == "__main__":
         print( f"Height: {height}, Width: {width}" )
         height, width = funcs.find_measurements(filename2, params)
         print( f"Height: {height}, Width: {width}" )
-        height, width = funcs.find_measurements(filename2, params)
+        height, width = funcs.find_measurements(filename3, params)
         print( f"Height: {height}, Width: {width}" )
-        
-        cv2.waitKey(0)
