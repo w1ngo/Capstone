@@ -2,7 +2,7 @@ import argparse
 import cv2
 import numpy as np
 from math import atan2, cos, sin, sqrt, pi
-import multiprocessing as mp
+from operator import methodcaller
 # _______________________________________________________ #
 
 '''
@@ -30,38 +30,17 @@ def read_filename():
 '''
 This function uses its string parameter to open and read a file storing processing
     parameters. Each line in the file stores a single parameter set in the following
-    format:
-        <gauss state>, <median state>, <low threshold>, <high threshold>
+    format: <low threshold>, <high threshold>
 
 It needs only the valid string filename, and returns a 2D list, with each elem being
     a set of parameters for processing
 '''
 def compile_param_list( filename="param_refine_all3.txt" ):
-    params = []
-
+    # uses map() and list comprehension to speed this process up
+    # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file:
-        for line in file:
-            tmp = line.split()
-            params.append( [int(tmp[0]), int(tmp[1])] )
-
-    return params
+        return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
     #ENDOF: compile_param_list()
-
-
-'''
-This function combines many other functions in this file. It accepts a filename
-    pointing to an image to be processed, and preps it. This is then passed to
-    a Canny edge detector with the specified thresholds. This output is then
-    LIGHTLY blurred once more to join up individual edge contours that appear
-    disjoint incorrectly. It is recast into a binary output (as the Gaussian blur
-    will make it shades of grey), and returned.
-
-It accepts the following parameters:
-    lthresh  - int     - The low hysterisis threshold to use for Canny
-    hthresh  - int     - The high hysterisis threshold to use for Canny
-    L2       - boolean - L2 gradient for Canny...leave False
-    filename - string  - path to image filename
-'''
 
 
 '''
