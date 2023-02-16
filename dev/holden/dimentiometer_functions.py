@@ -1,11 +1,12 @@
-#!/usr/bin/python3
+ #!/usr/bin/python3
 '''
 This file stores the functions needed for the dimentiometer to function properly.
     Associated functions include motor controls for the trapdoor, camera controls,
     image processing, etc.
 '''
 
-import RPI.GPIO as gpio
+from edge_detect import detection_functions
+import RPi.GPIO as gpio
 
 
 '''
@@ -19,13 +20,13 @@ This function performs the steps necessary to calibrate the camera according
 '''
 def calibrate_camera( camera ):
     if camera == "Top":
-
+        0 == 0
 
     elif camera == "Side":
-
+        0 == 0
 
     else:
-
+        0 == 0
 
     return
     #ENDOF: calibrate_camera(camera)
@@ -41,13 +42,13 @@ This function takes a picture remotely using the connection to the camera. It
 '''
 def take_picture( camera ):
     if camera == "Top":
-
+        0 == 0
 
     elif camera == "Bottom":
-
+        0 == 0
 
     else:
-
+        0 == 0
 
     return
     #ENDOF: take_picture(camera)
@@ -79,13 +80,13 @@ This function performs the commands needed to open or close the trapdoor. It
 '''
 def control_trapdoor( option ):
     if option == "Open":
-
+        0 == 0
 
     elif option == "Close":
-
+        0 == 0
 
     else:
-        
+        0 == 0 
 
     return True
     #ENDOF: control_trapdoor(option)
