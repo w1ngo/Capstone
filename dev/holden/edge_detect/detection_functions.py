@@ -20,8 +20,7 @@ def read_filename():
     args     = vars(args.parse_args())
     filename =  ""
 
-    if args["image"]:
-        filename = args["image"]
+    if args["image"]: filename = args["image"]
 
     return filename
     #ENDOF: read_filename()
@@ -38,9 +37,46 @@ It needs only the valid string filename, and returns a 2D list, with each elem b
 def compile_param_list( filename="param_refine_all3.txt" ):
     # uses map() and list comprehension to speed this process up
     # opens file, makes param pair from each line, converts that line into integers
-    with open(filename, "r") as file:
-        return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
+    with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
     #ENDOF: compile_param_list()
+
+
+def measure_single(img_obj, param_list, prnt=False, low_rect_area=300):
+    # index constants
+    HEIGHT_IND = 0
+    WIDTH_IND  = 1
+    LTHRESH    = 0
+    HTHRESH    = 1
+    
+    img_edges = cv2.Canny(img_obj, param_list[HTHRESH], param_list[LTHRESH], 3, L2gradient=False)
+    
+    # light blur & re-binarize image to join up broken edge pixels
+    img_edges    = cv2.GaussianBlur(img_edges, [3, 5], (1.0/3.0), 0, cv2.BORDER_WRAP)
+    _, img_edges = cv2.threshold(img_edges, 0, 255, cv2.THRESH_BINARY)
+    
+    # use inbuilt contour-locating fxn on input image object
+    cnts = cv2.findContours(img_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+    dat  = [cv2.minAreaRect(elem) for elem in cnts if cv2.contourArea(elem) > low_rect_area]
+
+    if prnt:
+        for d in dat:     
+            window = cv2.namedWindow(f"{param_list[HTHRESH]} {param_list[LTHRESH]} Box", cv2.WINDOW_NORMAL)
+            cv2.drawContours(img_edges, [np.int0(cv2.boxPoints(d))], 0, (255, 255, 255), 2)
+
+            cv2.imshow(f"{param_list[HTHRESH]} {param_list[LTHRESH]} Box", img_edges)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+    
+    # if did not receive clear information, or multiple boxes found
+        # could implement box combination, but not worth it as of right now
+    if len( dat ) != 1:
+        return 0, 0
+
+    # retrieve bounding rect data from the list returned by orientation() and store
+    return dat[0][1][HEIGHT_IND], dat[0][1][WIDTH_IND]
+    
+
 
 
 '''
@@ -55,17 +91,11 @@ Requires a string image filename parameter
 Requires a 2D list of parameters with each element being a list formatted:
     <low thresh>, <high thresh>
 '''
-def find_measurements( img_filename, params ):
+def find_measurements( img_filename, params, prnt=False ):
     # values to return
     height  = 0
     width   = 0
     tot     = 0
-
-    # index constants
-    LTHRESH    = 0
-    HTHRESH    = 1
-    HEIGHT_IND = 0
-    WIDTH_IND  = 1
 
     # read image & filter for prep. As preprocessing is always the same, do not repeat
     img = cv2.GaussianBlur(cv2.imread( img_filename, cv2.IMREAD_GRAYSCALE ), [0, 0], 3, 0, cv2.BORDER_WRAP)
@@ -74,28 +104,15 @@ def find_measurements( img_filename, params ):
 
     # process image foreach set of parameters
     for line in params: 
-        img_edges = cv2.Canny(img, line[HTHRESH], line[LTHRESH], 3, L2gradient=False)
-        
-        # light blur & re-binarize image to join up broken edge pixels
-        img    = cv2.GaussianBlur(img, [3, 5], (1.0/3.0), 0, cv2.BORDER_WRAP)
-        _, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY)
-        
-        # use inbuilt contour-locating fxn on input image object
-        cnts = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        cnts = cnts[0] if len(cnts) == 2 else cnts[1]
-        dat  = [cv2.minAreaRect(elem) for elem in cnts if cv2.contourArea(elem) > 100]
-        
-        # if did not receive clear information, or multiple boxes found
-            # could implement box combination, but not worth it as of right now
-        if len( dat ) != 1:
-            continue
-
-        # retrieve bounding rect data from the list returned by orientation() and store
-        height += dat[0][1][HEIGHT_IND]
-        width  += dat[0][1][WIDTH_IND]
-        tot    += 1
+        h, w = measure_single(img, line, prnt)
+        height += h
+        width  += w
+        tot    += (h != 0) and (w != 0)
 
     # compute averages based on number of used param combinations
+    if tot == 0:
+        return 0, 0
+    
     height /= tot
     width  /= tot
 
