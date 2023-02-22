@@ -7,25 +7,27 @@ from sys import platform
 if __name__ == "__main__":
     
     if platform == "linux" or platform == "linux2":
-        filename1 = r"./images/isolated_potato.jpg"
-        filename2 = r"./images/isolated_potato2.jpg"
-        filename3 = r"./images/isolated_potato3.png"
+        filenames = [ r"./images/isolated_potato.jpg",  \
+                      r"./images/isolated_potato2.jpg", \
+                      r"./images/isolated_potato3.png", \
+                      r"./images/IMG_4011.jpg",         \
+                      r"./images/IMG_4012.jpg",         \
+                      r"./images/IMG_4013.jpg" ]
 
     elif platform == "win32" or platform == "win64":
-        filename1 = r".\images\isolated_potato.jpg"
-        filename2 = r".\images\isolated_potato2.jpg"
-        filename3 = r".\images\isolated_potato3.png"
+        filenames = [ r".\images\isolated_potato.jpg",  \
+                      r".\images\isolated_potato2.jpg", \
+                      r".\images\isolated_potato3.png", \
+                      r".\images\IMG_4011.jpg",         \
+                      r".\images\IMG_4012.jpg",         \
+                      r".\images\IMG_4013.jpg" ]
 
-    if input("Enter y to refine parameter options, or anything else to test edge detection as-is: ") == "y":
+    if input("Enter r to refine parameter options or t test edge detection as-is: ") in ("R", "r"):
         _, data = refine.multi_refine( [filename1, filename2, filename3] )
 
     else:
+        disp = input("Display bounding boxes [Y/n]? ") in ("Y", "y")
         params = funcs.compile_param_list()
-        # print(f"params compiled...{len(params)} param sets identified\n\n")
-
-        height, width = funcs.find_measurements(filename1, params)
-        print( f"Height: {height}, Width: {width}" )
-        height, width = funcs.find_measurements(filename2, params)
-        print( f"Height: {height}, Width: {width}" )
-        height, width = funcs.find_measurements(filename3, params)
-        print( f"Height: {height}, Width: {width}" )
+        [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
+         for i, elem in enumerate( list(map(lambda file : funcs.find_measurements(file, params, disp), filenames)) )  \
+         if elem[0] != 0]
