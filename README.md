@@ -2,12 +2,14 @@
 This repo will store the drivers written for all embedded systems used for the 
 	2022/23 Capstone project. The code will be loaded onto a raspberry pi 4,
 	which serves as the computation hub and uses a derivative of the Debian 
-	Linux distribution.
+	Linux distribution
 
-Customized .bashrc and .bash_aliases files are written to automate some processes 
-	when the shell is initiated. The custom .bashrc (startup procedure) will
-	have our code attached, so the user should only have to open a shell or
-	command line and login to start the program.
+___________________________________________________________________________________.
+
+Customized bash files are written to automate some processes  when the shell is 
+    initiated. The custom .bashrc (startup procedure) will have our code attached,
+    so the user should only have to open a shell or command line and login to start 
+    the program.
 
 The structure of the code will be mainly written in Python to ease understanding, 
 	development, and debugging. C++ was originally being used for image 
@@ -16,11 +18,12 @@ The structure of the code will be mainly written in Python to ease understanding
 
 In order to use this repo successfully, clone the repository onto your host machine. 
 	If using a Windows machine, enable and use a Debian distro on WSL, and do all 
-	development through the command line, otherwise the building process will not 
-	work.
+	development through the command line to get as close to the target ennvironment
+    as possible, however some required packages are limited to running on a 
+    Raspberry Pi.
 
-Sourcing the init.sh script in the shell_scripts folder should download and compile 
-	the needed opencv files.
+Sourcing the init.sh script in the shell_scripts folder should update the device
+    and install the required packages and modules.
 
 Updates will be posted to the Github periodically (aiming for about once a week).
 ________________________________________________________________________________________
