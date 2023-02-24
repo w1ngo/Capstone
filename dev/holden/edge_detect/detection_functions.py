@@ -47,7 +47,7 @@ There is a default parameter that references a known proper file if one is not p
 
 It returns a 2D list of integers, with each 1D list being a low/high pair
 '''
-def compile_param_list( filename="param_refine_all3.txt" ) -> list[[int, int]]:
+def compile_param_list( filename: str="param_refine_all3.txt" ) -> list[[int, int]]:
     # uses map() and list comprehension to speed this process up
     # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
@@ -68,7 +68,7 @@ it has an optional "low_rect_area" parameter to specify the minimum areas to con
 It returns a pair of floats (height, width)
 
 '''
-def measure_single(img_obj, param_list: list[[int, int]], prnt=False, low_rect_area=1000) -> (float, float):
+def measure_single(img_obj, param_list: list[int, int], prnt: bool=False, low_rect_area: int=1000) -> (float, float):
     # index constants
     HEIGHT_IND = 0
     WIDTH_IND  = 1
@@ -122,7 +122,7 @@ It allows an optional "prnt" parameter for including debug output
 
 It returns a pair of floats (height, width)
 '''
-def find_measurements( img_filename: str, params: list[[int, int]], prnt=False ) -> (float, float):
+def find_measurements( img_filename: str, params: list[[int, int]], prnt: bool=False ) -> (float, float):
     # values to return
     height  = 0
     width   = 0
