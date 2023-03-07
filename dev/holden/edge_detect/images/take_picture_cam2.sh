@@ -9,9 +9,8 @@ fswebcam --device /dev/video2  \
 	 --no-banner           \
 	 --no-info             \
 	 --greyscale           \
-	 --png 0               \
 	 --save                \
-         image.png
+         image_cam2.jpg
 
 # line below prints controls that can be applied to the camera
 # fswebcam -d /dev/video0 --list-controls
