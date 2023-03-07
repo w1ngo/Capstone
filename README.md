@@ -4,7 +4,7 @@ This repo will store the drivers written for all embedded systems used for the
 	which serves as the computation hub and uses a derivative of the Debian 
 	Linux distribution
 
-___________________________________________________________________________________.
+___________________________________________________________________________________
 
 Customized bash files are written to automate some processes  when the shell is 
     initiated. The custom .bashrc (startup procedure) will have our code attached,
@@ -86,11 +86,6 @@ Due to the highly specified application of the edge detection software, deviatio
 	inconsistent lighting resulting in large or notable shadows will cause
 	reliably inaccurate readings.
 
-For some reason during testing, it has been noted that .pngs take longer to process
-	than .jpgs. It is not certain whether this is due to the nature of the filetype
-	or something inherent in the testing protocol at this moment, but it is something
-	to be aware of.
-
 The edge detection functionality is built with several assumptions, and usage of it
 	should keep this in mind. Things such as large shadows, in its current state,
 	can drastically affect the performance of it. With this in mind, it should
@@ -102,6 +97,11 @@ Testing was done on .jpg and .png filetypes. For some reason, .png files took
 	noticeably longer to process, at no noteable increase in accuracy. It
 	was not a long wait, simply longer than the time needed for .jpgs. For
 	that reason, .jpg will likely be the desired filetype for processing images.
+	UPDATE: The cameras natively export .jpgs, and cannot be reconfigured to
+	output a lossless or raw format. Camera parameters, such as contrast,
+	brightness, sharpness, etc., can be controlled through the shell. Commands
+	have been configured to automate the image-taking process, from detecting
+	the USB-camera detection to sending the command to take a picture.
 
 Speed has not been an issue after basic optimization techniques were implemented.
 	Charts were made to identify "hot spots," and one major loop was reduced 
