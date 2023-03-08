@@ -47,7 +47,7 @@ There is a default parameter that references a known proper file if one is not p
 
 It returns a 2D list of integers, with each 1D list being a low/high pair
 '''
-def compile_param_list( filename: str="param_refine_all3.txt" ) -> list:
+def compile_param_list( filename: str="param_refine_all3.txt" ) -> list[list[int]]:
     # uses map() and list comprehension to speed this process up
     # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
@@ -68,18 +68,18 @@ it has an optional "low_rect_area" parameter to specify the minimum areas to con
 It returns a pair of floats (height, width)
 
 '''
-def measure_single(img_obj, param_list: list, prnt: bool=False, low_rect_area: int=1000) -> (float, float):
+def measure_single(img_obj: np.ndarray, param_list: list[int], prnt: bool=False, low_rect_area: int=1000) -> (float, float):
     # index constants
-    HEIGHT_IND = 0
-    WIDTH_IND  = 1
-    LTHRESH    = 0
-    HTHRESH    = 1
+    HEIGHT_IND: int = 0
+    WIDTH_IND:  int = 1
+    LTHRESH:    int = 0
+    HTHRESH:    int = 1
 
     # pass prepped image into Canny with the specified threshold params
-    img_edges = cv2.Canny(img_obj, param_list[HTHRESH], param_list[LTHRESH], 3, L2gradient=False)
+    img_edges: np.ndarray = cv2.Canny(img_obj, param_list[HTHRESH], param_list[LTHRESH], 3, L2gradient=False)
     
     # light blur & re-binarize image to join up broken edge pixels
-    img_edges    = cv2.GaussianBlur(img_edges, [3, 5], (1.0/3.0), 0, cv2.BORDER_WRAP)
+    img_edges: np.ndarray = cv2.GaussianBlur(img_edges, [3, 5], (1.0/3.0), 0, cv2.BORDER_WRAP)
     _, img_edges = cv2.threshold(img_edges, 0, 255, cv2.THRESH_BINARY)
     
     # use inbuilt contour-locating fxn on input image object
@@ -122,14 +122,14 @@ It allows an optional "prnt" parameter for including debug output
 
 It returns a pair of floats (height, width)
 '''
-def find_measurements( img_filename: str, params: list, prnt: bool=False ) -> (float, float):
+def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=False ) -> (float, float):
     # values to return
-    height  = 0
-    width   = 0
-    tot     = 0
+    height: int = 0
+    width:  int = 0
+    tot:    int = 0
 
     # read image & filter for prep. As preprocessing is always the same, do not repeat
-    img = cv2.GaussianBlur(cv2.imread( img_filename, cv2.IMREAD_GRAYSCALE ), [0, 0], 3, 0, cv2.BORDER_WRAP)
+    img: np.ndarray = cv2.GaussianBlur(cv2.imread( img_filename ), [0, 0], 3, 0, cv2.BORDER_WRAP)
     for i in range(10):
         img = cv2.medianBlur(img, 7)
 
