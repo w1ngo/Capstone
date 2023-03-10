@@ -5,7 +5,8 @@ This file stores the functions needed for the dimentiometer to function properly
     image processing, etc.
 '''
 
-from edge_detect import detection_functions
+from edge_detect import detection_functions as ed
+from file_io import file_io as io
 import RPi.GPIO as gpio
 
 

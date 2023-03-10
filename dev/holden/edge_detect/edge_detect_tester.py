@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     else:
         disp = input("Display bounding boxes [Y/n]? ") in ("Y", "y")
-        params = funcs.compile_param_list()
+        params = funcs.compile_param_list();
         [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
          for i, elem in enumerate( list(map(lambda file : funcs.find_measurements(file, params, disp), filenames)) )  \
          if elem[0] != 0]
