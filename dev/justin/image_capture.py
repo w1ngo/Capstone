@@ -56,6 +56,19 @@ def series_recording():
 
     return
 
+def test_recording():
+    for i in range(10):
+        check1, frame1 = cam1.read()  # starts video capture
+        #cv2.imshow("camera1", frame1)  # shows video recording output, uncomment for testing
+        cv2.waitKey(1)  # time in ms between each frame
+
+    cv2.imwrite('pic1.jpg', frame1)
+    cam1.release()
+    cv2.destroyAllWindows()
+
+
+
 
 # parallel_recording()
-series_recording()
+# series_recording()
+test_recording()
