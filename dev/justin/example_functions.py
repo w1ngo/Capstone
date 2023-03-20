@@ -10,7 +10,7 @@ The trapdoor is controlled by a servo motor.
 Duty cycle values depend on motor.
 """
 def trapdoor_control(option):
-    servoPIN = 12
+    servoPIN = 27
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(servoPIN, GPIO.OUT)
     pwm = GPIO.PWM(servoPIN, 50)    # Frequency of 50 Hz
@@ -42,8 +42,8 @@ def motor_control(motor):
     CW = 1
     CCW = 0
     if motor == "Vertical":
-        DIR = 4
-        STEP = 3
+        DIR = 11
+        STEP = 8
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -67,8 +67,8 @@ def motor_control(motor):
             sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
 
     elif motor == "Rotational":
-        DIR = 10
-        STEP = 22
+        DIR = 12
+        STEP = 13
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -104,29 +104,34 @@ Function for capturing an image with the USB cameras.
 """
 
 def take_picture(camera):
-    camTop = cv2.VideoCapture(0)  # Defines which camera is used for recording
-    camSide = cv2.VideoCapture(1)
+    camera_top = cv2.VideoCapture(0)  # Defines which camera is used for recording
+    camera_side = cv2.VideoCapture(1)
     if camera == "Top":
         for i in range(10):
-            check1, frame1 = camTop.read()  # starts video capture
-            #cv2.imshow("camera1", frame1)  # shows video recording output, uncomment for testing
+            check, frame = camera_top.read()  # starts video capture
+            print(check)
+            # cv2.imshow("camera1", frame1)  # shows video recording output, uncomment for testing
             cv2.waitKey(1)  # time in ms between each frame
 
-        cv2.imwrite('pic1.jpg', frame1)
-        camTop.release()
+        cv2.imwrite('top_pic.jpg', frame)
+        gray_pic = cv2.imread('top_pic.jpg', cv2.IMREAD_GRAYSCALE)
+        camera_top.release()
         cv2.destroyAllWindows()
-    
+
     elif camera == "Side":
         for i in range(10):
-            check2, frame2 = camSide.read()
-            #cv2.imshow("camera2", frame2)
+            check, frame = camera_side.read()
+            # cv2.imshow("camera2", frame2)
             cv2.waitKey(1)
 
-        cv2.imwrite('pic2.jpg', frame2)
-        camSide.release()
+        cv2.imwrite('side_pic.jpg', frame)
+        gray_pic = cv2.imread('side_pic.jpg', cv2.IMREAD_GRAYSCALE)
+        camera_side.release()
         cv2.destroyAllWindows()
 
     else:
         return
 
-    return
+    return gray_pic
+
+
