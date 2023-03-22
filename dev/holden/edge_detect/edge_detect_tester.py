@@ -3,6 +3,7 @@ import detection_functions as funcs
 import refine_parameters   as refine
 import random
 from sys import platform
+from time import perf_counter
 
 if __name__ == "__main__":
     
@@ -28,6 +29,17 @@ if __name__ == "__main__":
     else:
         disp = input("Display bounding boxes [Y/n]? ") in ("Y", "y")
         params = funcs.compile_param_list()
+        t1 = perf_counter()
         [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
          for i, elem in enumerate( list(map(lambda file : funcs.find_measurements(file, params, disp), filenames)) )  \
          if elem[0] != 0]
+        t1 = perf_counter() - t1
+
+        t2 = perf_counter()
+        [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
+         for i, elem in enumerate( list(map(lambda file : funcs.find_measurements2(file, params, disp), filenames)) )  \
+         if elem[0] != 0]
+        t2 = perf_counter() - t2
+
+        print(t1)
+        print(t2)
