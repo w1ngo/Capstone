@@ -7,6 +7,8 @@ from numpy import ndarray, int0
 from math import atan2, cos, sin, sqrt, pi
 from operator import methodcaller
 from scipy import stats
+from multiprocessing import Pool
+from functools import partial
 # _______________________________________________________ #
 
 '''
@@ -52,7 +54,6 @@ There is a default parameter that references a known proper file if one is not p
 It returns a 2D list of integers, with each 1D list being a low/high pair
 '''
 def compile_param_list( filename: str="param_refine_all3.txt" ) -> list[list[int]]:
-    # uses map() and list comprehension to speed this process up
     # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
     #ENDOF: compile_param_list()
@@ -120,7 +121,7 @@ it has an optional "low_rect_area" parameter to specify the minimum areas to con
 
 It returns a pair of floats (height, width)
 '''
-def measure_single(img_obj: ndarray, param_list: list[int], prnt: bool=False, low_rect_area: int=1000) -> list[float]:
+def measure_single(img_obj: ndarray, param_list: list[int], low_rect_area: int=1000) -> list[float]:
     # pass prepped image into Canny with the specified threshold params
     img_edges: ndarray = Canny(img_obj, param_list[1], param_list[0], 3, L2gradient=False)
     
@@ -134,7 +135,7 @@ def measure_single(img_obj: ndarray, param_list: list[int], prnt: bool=False, lo
     dat  = [minAreaRect(elem) for elem in cnts if contourArea(elem) > low_rect_area]
 
     # print outline and bounding box if desired
-    if prnt:
+    if False:
         for d in dat:     
             window = namedWindow(f"{param_list[1]} {param_list[0]} Box", WINDOW_NORMAL)
             drawContours(img_edges, [int0(boxPoints(d))], 0, (255, 255, 255), 2)
@@ -164,7 +165,7 @@ It allows an optional "prnt" parameter for including debug output
 
 It returns a pair of floats (height, width)
 '''
-def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=False ) -> (float, float):
+def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=False) -> (float, float):
     # values to return
     height: int = 0
     width:  int = 0
@@ -182,15 +183,16 @@ def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=Fa
         width  += w
         tot    += ((h != 0) and (w != 0))
     '''
-    return filter_measurements( [ measure_single(img, line, prnt) for line in params ] )
-    
-    '''
-    # compute averages based on number of used param combinations
-    if tot == 0: return 0, 0
-    
-    height /= tot
-    width  /= tot
-
-    return height, width
-    '''
+    return filter_measurements( [ measure_single(img, line) for line in params ] )
     #ENDOF: find_measurements()
+
+
+def find_measurements2( img_filename: str, params: list[list[int]], prnt: bool=False ) -> (float, float):
+    height: int = 0
+    width:  int = 0
+    tot:    int = 0
+
+    # read image & filter for prep. As preprocessing is always the same, do not repeat
+    img: ndarray = GaussianBlur(imread( img_filename ), [0, 0], 3, 0, BORDER_WRAP)
+    for i in range(10): img = medianBlur(img, 7)
+    with Pool() as p: return filter_measurements( list(p.imap(partial(measure_single, img), params)) )
