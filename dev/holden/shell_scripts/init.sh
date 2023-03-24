@@ -7,3 +7,5 @@ sudo apt install python3-opencv
 sudo apt install fswebcam
 sudo apt install python3-numpy
 sudo apt install python3-pandas
+sudo apt install python3-xlrd
+sudo apt install python3-openpyxl
