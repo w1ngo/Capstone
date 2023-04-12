@@ -10,6 +10,12 @@ usb-devices -> Another shell command. Seems to be a more
   displayed as well.
 '''
 
+def read_barcode() -> str:
+    for i in range(5):
+        inp = input("Scan batch ID: ")
+        if input(f"Is {inp} the correct batch ID [Y/n]?") in ["Y", "y", "YES", "Yes", "yes"]: return inp
+    return input("10 incorrect attempts to read the barcode...please type in the desired Batch ID: ")
+
 def mount_drive():
     subprocess.Popen('sudo mount /dev/sda1 /mnt/usb -o uid=pi,gid=pi')
     #DNDOF: mount_drive()
