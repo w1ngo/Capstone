@@ -12,22 +12,8 @@
 # does that on input.
 
 
-fswebcam --device /dev/video0  \
-	 --quiet               \
-	 --resolution 640x480  \
-	 -s sharpness=15       \
-	 --frame 1            \
-	 --no-timestamp        \
-	 --no-banner           \
-	 --no-info             \
-	 --greyscale           \
-	 --save                \
-         image_cam1.jpg
-
-
 # line below prints controls that can be applied to the camera
 # fswebcam -d /dev/video0 --list-controls
-
 
 
 fswebcam --device /dev/video0  \
@@ -42,17 +28,3 @@ fswebcam --device /dev/video0  \
 	 --save                \
          image_cam1_5frames.jpg
 
-
-
-
-fswebcam --device /dev/video0  \
-	 --quiet               \
-	 --resolution 640x480  \
-	 -s sharpness=15       \
-	 --frame 10            \
-	 --no-timestamp        \
-	 --no-banner           \
-	 --no-info             \
-	 --greyscale           \
-	 --save                \
-         image_cam1_10frames.jpg

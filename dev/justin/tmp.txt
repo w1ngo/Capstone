@@ -1,2 +1,0 @@
-This is a temporary text file. It is here so that git will track the folder as a whole
-while it is still empty. It can be removed once other files are added.
