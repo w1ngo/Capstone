@@ -14,15 +14,15 @@ def trapdoor_control(option):
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(servoPIN, GPIO.OUT)
     pwm = GPIO.PWM(servoPIN, 50)    # Frequency of 50 Hz
-    pwm.start(0)  # Initialize
+    pwm.start(0)                    # Initialize
 
     if option == "Open":
         pwm.ChangeDutyCycle(0)  # TEMP VALUE (0): calibrate and change to desired open position value
-        sleep(0)    #TEMP VALUE (0): change to desired wait time
+        sleep(0)                #TEMP VALUE (0): change to desired wait time
 
     elif option == "Close":
         pwm.ChangeDutyCycle(0)  # TEMP VALUE (0): calibrate and change to desired closed position value
-        sleep(0)    #TEMP VALUE (0): change to desired wait time
+        sleep(0)                # TEMP VALUE (0): change to desired wait time
 
     else:
         pwm.stop()
@@ -37,6 +37,12 @@ def trapdoor_control(option):
 """
 Function for controlling stepper motors on the Gravitometer.
 Currently stepper 1 is vertical and stepper 2 is rotational.
+    Holden TODO: clean this up
+            break up into helper functions for readability
+            break basket movement into two functions....lowering
+            and then raising with no space to take a weight
+            measurement isnt helpful
+            Recomment everything
 """
 def motor_control(motor):
     CW = 1
@@ -48,23 +54,23 @@ def motor_control(motor):
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
 
-        GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to downwards direction
+        GPIO.output(DIR, CW)            # TEMP VALUE (CW): Change to downwards direction
         sleep(1)
-        for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
+        for i in range(200):            # TEMP VALUE (200): Number of steps, affects how far motor rotates
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM LOW duration
         
-        sleep(10)   # TEMP VALUE (10): Number of seconds to wait before lifting basket back up
+        sleep(10)                       # TEMP VALUE (10): Number of seconds to wait before lifting basket back up
 
-        GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to upwards direction
+        GPIO.output(DIR, CCW)           # TEMP VALUE (CCW): Change to upwards direction
         sleep(1)
-        for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
+        for i in range(200):            # TEMP VALUE (200): Number of steps, affects how far motor rotates
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM LOW duration
 
     elif motor == "Rotational":
         DIR = 12
@@ -73,23 +79,23 @@ def motor_control(motor):
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
 
-        GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to first direction
+        GPIO.output(DIR, CW)            # TEMP VALUE (CW): Change to first direction
         sleep(1)
-        for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
+        for i in range(200):            # TEMP VALUE (200): Number of steps, affects how far motor rotates
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM LOW duration
         
-        sleep(10)   # TEMP VALUE (10): Number of seconds to wait before lifting basket back up
+        sleep(10)                       # TEMP VALUE (10): Number of seconds to wait before lifting basket back up
 
-        GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to second direction
+        GPIO.output(DIR, CCW)           # TEMP VALUE (CCW): Change to second direction
         sleep(1)
-        for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
+        for i in range(200):            # TEMP VALUE (200): Number of steps, affects how far motor rotates
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.005)                # TEMP VALUE (0.005): Affects PWM LOW duration
 
     else:
         GPIO.cleanup()
