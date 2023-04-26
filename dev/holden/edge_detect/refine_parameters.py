@@ -42,11 +42,3 @@ def multi_refine(filename_ls):
     print( "Refining completed" )
 
 
-def recursive_cleanup(param_filename, prepped_imgs):
-    with open(param_file, "r") as file:
-            params = [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
-    
-    if len(params) <= 10:
-        return params
-    
-    

@@ -53,61 +53,12 @@ There is a default parameter that references a known proper file if one is not p
 
 It returns a 2D list of integers, with each 1D list being a low/high pair
 '''
-def compile_param_list( filename: str="param_refine_all3.txt" ) -> list[list[int]]:
+def compile_param_list( filename: str="param_refine_all3.txt" ):
     # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
     #ENDOF: compile_param_list()
 
     
-'''
-This function is meant to improve accuracy by applying statistical analysis
-    to the measured heights and widths from the measurmenet functions. Ideally,
-    this will do nothing. It will remove outliers should they exist, and return
-    the average of the remaining points (treating height and width differently)
-
-It accepts one parameter, a 2D list of height-width pairs
-
-It returns a pair of floats representing the average of
-    the input heights and widths, with z-score based outliers
-    disregarded
-'''
-def filter_measurements( pairs: list[int] ) -> (float, float):
-    '''
-    TODO: Want to add in high/low thresholds...do this on
-        the pixel side or centimeter side? Will be easier
-        to put support in for centimeter side
-    '''
-
-    # compute zscores of heights and widths to filter outliers
-    count:  int = 0
-    height: int = 0
-    width:  int = 0
-    sz:     int = len(pairs)
-
-    heights: list[int] = [0] * sz
-    widths:  list[int] = [0] * sz
-
-    for i, pair in enumerate(pairs):
-        heights[i] = pair[0]
-        widths[i]  = pair[1]
-
-    height_zscore:list[int] = stats.zscore(heights)
-    width_zscore: list[int] = stats.zscore(widths)
-
-    for i in range(sz):
-        if (abs(height_zscore[i]) < 3) and (abs(width_zscore[i]) < 3):
-            count  += 1
-            height += heights[i]
-            width  += widths[i]
-
-    if count == 0:
-        print("no valid data detected")
-        return 0, 0
-
-    return (height / count), (width / count)
-    #ENDOF: filter_measurements()
-
-
 '''
 This function executes the potato measurement procedure on a single image with a single parameter pair
 It simplifies the find_measurements() function below by reducing the amount of code within, and this
@@ -121,12 +72,12 @@ it has an optional "low_rect_area" parameter to specify the minimum areas to con
 
 It returns a pair of floats (height, width)
 '''
-def measure_single(img_obj: ndarray, param_list: list[int], low_rect_area: int=1000) -> list[float]:
+def measure_single(img_obj: ndarray, param_list, low_rect_area: int=1000):
     # pass prepped image into Canny with the specified threshold params
-    img_edges: ndarray = Canny(img_obj, param_list[1], param_list[0], 3, L2gradient=False)
+    img_edges = Canny(img_obj, param_list[1], param_list[0], 3, L2gradient=False)
     
     # light blur & re-binarize image to join up broken edge pixels
-    img_edges: ndarray = GaussianBlur(img_edges, [3, 5], (1.0/3.0), 0, BORDER_WRAP)
+    img_edges: ndarray = GaussianBlur(img_edges, (3, 5), (1.0/3.0), 0, BORDER_WRAP)
     _, img_edges = threshold(img_edges, 0, 255, THRESH_BINARY)
     
     # use inbuilt contour-locating fxn on input image object
@@ -135,7 +86,7 @@ def measure_single(img_obj: ndarray, param_list: list[int], low_rect_area: int=1
     dat  = [minAreaRect(elem) for elem in cnts if contourArea(elem) > low_rect_area]
 
     # print outline and bounding box if desired
-    if False:
+    if True:
         for d in dat:     
             window = namedWindow(f"{param_list[1]} {param_list[0]} Box", WINDOW_NORMAL)
             drawContours(img_edges, [int0(boxPoints(d))], 0, (255, 255, 255), 2)
@@ -165,34 +116,23 @@ It allows an optional "prnt" parameter for including debug output
 
 It returns a pair of floats (height, width)
 '''
-def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=False) -> (float, float):
+def find_measurements( img_filename: str, params, prnt: bool=False) -> (float, float):
     # values to return
-    height: int = 0
-    width:  int = 0
-    tot:    int = 0
+    height = 0
+    width  = 0
+    tot    = 0
 
     # read image & filter for prep. As preprocessing is always the same, do not repeat
-    img: ndarray = GaussianBlur(imread( img_filename ), [0, 0], 3, 0, BORDER_WRAP)
+    img = GaussianBlur(imread( img_filename ), (0, 0), 3, 0, BORDER_WRAP)
     for i in range(10): img = medianBlur(img, 7)
 
-    '''
     # process image foreach set of parameters
     for line in params: 
         h, w    = measure_single(img, line, prnt)
-        height += h
-        width  += w
+        height += (width  != 0) * h
+        width  += (height != 0) * w
         tot    += ((h != 0) and (w != 0))
-    '''
-    return filter_measurements( [ measure_single(img, line) for line in params ] )
+    if tot == 0: return 0, 0
+    return height / tot, width / tot
     #ENDOF: find_measurements()
 
-
-def find_measurements2( img_filename: str, params: list[list[int]], prnt: bool=False ) -> (float, float):
-    height: int = 0
-    width:  int = 0
-    tot:    int = 0
-
-    # read image & filter for prep. As preprocessing is always the same, do not repeat
-    img: ndarray = GaussianBlur(imread( img_filename ), [0, 0], 3, 0, BORDER_WRAP)
-    for i in range(10): img = medianBlur(img, 7)
-    with Pool() as p: return filter_measurements( list(p.imap(partial(measure_single, img), params)) )

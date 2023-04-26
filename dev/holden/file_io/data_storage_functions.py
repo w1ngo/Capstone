@@ -16,13 +16,41 @@ def read_barcode() -> str:
         if input(f"Is {inp} the correct batch ID [Y/n]?") in ["Y", "y", "YES", "Yes", "yes"]: return inp
     return input("10 incorrect attempts to read the barcode...please type in the desired Batch ID: ")
 
+def take_pic(camera: int):
+    if camera == 1:
+        cmd = " fswebcam --device /dev/video0   \
+                         --quiet                \
+                         --resolution 640x480   \
+                         -s sharpness=15       \
+                         --frame 5              \
+                         --no-timestamp         \
+                         --no-banner            \
+                         --no-info              \
+                         --greyscale            \
+                         --save                 \
+                         image_cam1_5frames.jpg "
+    else: 
+        cmd = " fswebcam --device /dev/video2  \
+	               --quiet               \
+	               --resolution 640x480  \
+	               -s sharpness=15       \
+	               --frame 10            \
+	               --no-timestamp        \
+	               --no-banner           \
+	               --no-info             \
+	               --greyscale           \
+	               --save                \
+                       image_cam2.jpg        "
+    subprocess.Popen( cmd.split(), stdout = subprocess.PIPE )
+
+
 def mount_drive():
-    subprocess.Popen('sudo mount /dev/sda1 /mnt/usb -o uid=pi,gid=pi')
+    subprocess.Popen('sudo mount /dev/sda1 /mnt/usb -o uid=pi,gid=pi'.split(), stdout=subprocess.PIPE)
     #DNDOF: mount_drive()
 
 
 def unmount_drive():
-    subprocess.Popen('sudo unmount /mnt/usb')
+    subprocess.Popen('sudo unmount /mnt/usb'.split(), stdout=subprocess.PIPE)
     #ENDOF: unmount_drive()
 
 
@@ -62,6 +90,11 @@ def write_csv(filename: str, data):
 
 
 if __name__=="__main__":
+    mount_drive()
+    unmount_drive()
+    take_pic(1)
+    take_pic(2)
+
     frame = read_excel_file("SPR Gravity 2022.xlsx", "22SPR")
     print(frame)
     write_excel_file("gravity_copy.xlsx", frame)
