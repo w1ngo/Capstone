@@ -51,11 +51,10 @@ There is a default parameter that references a known proper file if one is not p
 
 It returns a 2D list of integers, with each 1D list being a low/high pair
 '''
-def compile_param_list( filename: str="param_refine_all3.txt" ) -> list[list[int]]:
+def compile_param_list( filename: str="param_refine_all3.txt" ):
     # opens file, makes param pair from each line, converts that line into integers
     with open(filename, "r") as file: return [ [int(line[0]), int(line[1])] for line in list(map(methodcaller("split"), file)) ]
     #ENDOF: compile_param_list()
-
 
 '''
 This function executes the potato measurement procedure on a single image with a single parameter pair
@@ -70,12 +69,12 @@ it has an optional "low_rect_area" parameter to specify the minimum areas to con
 
 It returns a pair of floats (height, width)
 '''
-def measure_single(img_obj: ndarray, param_list: list[int], low_rect_area: int=100000) -> list[float]:
+def measure_single(img_obj, param_list, low_rect_area=1000):
     # pass prepped image into Canny with the specified threshold params
-    img_edges: ndarray = Canny(img_obj, param_list[1], param_list[0], 3, L2gradient=False)
+    img_edges = Canny(img_obj, param_list[1], param_list[0], 3, L2gradient=False)
     
     # light blur & re-binarize image to join up broken edge pixels
-    img_edges: ndarray = GaussianBlur(img_edges, [3, 5], (1.0/3.0), 0, BORDER_WRAP)
+    img_edges: ndarray = GaussianBlur(img_edges, (3, 5), (1.0/3.0), 0, BORDER_WRAP)
     _, img_edges = threshold(img_edges, 0, 255, THRESH_BINARY)
     
     # use inbuilt contour-locating fxn on input image object
@@ -85,7 +84,7 @@ def measure_single(img_obj: ndarray, param_list: list[int], low_rect_area: int=1
     
 
     # print outline and bounding box if desired
-    if False:
+    if True:
         for d in dat:     
             window = namedWindow(f"{param_list[1]} {param_list[0]} Box", WINDOW_NORMAL)
             drawContours(img_edges, [int0(boxPoints(d))], 0, (255, 255, 0), 2)
@@ -138,14 +137,14 @@ It allows an optional "prnt" parameter for including debug output
 
 It returns a pair of floats (height, width)
 '''
-def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=False) -> (float, float):
+def find_measurements( img_filename: str, params, prnt: bool=False) -> (float, float):
     # values to return
-    height: int = 0
-    width:  int = 0
-    tot:    int = 0
+    height = 0
+    width  = 0
+    tot    = 0
 
     # read image & filter for prep
-    img: ndarray = GaussianBlur(imread( img_filename ), [0, 0], 3, 0, BORDER_WRAP)
+    img = GaussianBlur(imread( img_filename ), (0, 0), 3, 0, BORDER_WRAP)
     for i in range(10): img = medianBlur(img, 7)
 
     
@@ -155,6 +154,7 @@ def find_measurements( img_filename: str, params: list[list[int]], prnt: bool=Fa
         height += (w != 0) * h
         width  += (h != 0) * w
         tot    += ((h != 0) and (w != 0))
+    if tot == 0: return 0, 0
     return height / tot, width / tot
     #ENDOF: find_measurements()
 
