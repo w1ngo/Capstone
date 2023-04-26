@@ -16,12 +16,13 @@ if __name__ == "__main__":
                       r"./images/IMG_4013.jpg" ]
 
     elif platform == "win32" or platform == "win64":
-        filenames = [ r".\images\isolated_potato.jpg",  \
-                      r".\images\isolated_potato2.jpg", \
-                      r".\images\isolated_potato3.png", \
-                      r".\images\IMG_4011.jpg",         \
-                      r".\images\IMG_4012.jpg",         \
-                      r".\images\IMG_4013.jpg" ]
+        filenames = [ r".\images\isolated_potato.jpg", \
+                      r".\images\isolated_potato2.jpg",\
+                      r".\images\isolated_potato3.png",\
+                      r".\images\20230406_180852.jpg", \
+                      r".\images\20230406_180906.jpg", \
+                      r".\images\20230406_180919.jpg", \
+                      r".\images\20230406_180931.jpg" ]
 
     if input("Enter r to refine parameter options or t test edge detection as-is: ") in ("R", "r"):
         _, data = refine.multi_refine( [filename1, filename2, filename3] )
@@ -29,17 +30,6 @@ if __name__ == "__main__":
     else:
         disp = input("Display bounding boxes [Y/n]? ") in ("Y", "y")
         params = funcs.compile_param_list()
-        t1 = perf_counter()
         [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
          for i, elem in enumerate( list(map(lambda file : funcs.find_measurements(file, params, disp), filenames)) )  \
          if elem[0] != 0]
-        t1 = perf_counter() - t1
-
-        t2 = perf_counter()
-        [print(f"Potato at <{filenames[i]:<29}> pixel dims: {elem[0]:<18} x {elem[1]:<18}") \
-         for i, elem in enumerate( list(map(lambda file : funcs.find_measurements2(file, params, disp), filenames)) )  \
-         if elem[0] != 0]
-        t2 = perf_counter() - t2
-
-        print(t1)
-        print(t2)
