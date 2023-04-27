@@ -8,6 +8,11 @@ Function for capturing an image with the USB cameras.
 """
 
 def take_picture(camera):
+    IR = 0
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(IR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    while not GPIO.input(IR):  # Wait for IR sensor
+        continue
     camera_top = cv2.VideoCapture(0)  # Defines which camera is used for recording
     camera_side = cv2.VideoCapture(1)
     if camera == "Top":

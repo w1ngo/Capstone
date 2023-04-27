@@ -7,6 +7,7 @@ import json
 from time import sleep
 from hx711 import HX711
 
+
 def test_camera_picture():
     while True:
         print("1. Top camera\n"
@@ -31,6 +32,7 @@ def test_camera_picture():
         camera.release()
         cv2.destroyAllWindows()
     
+
 def test_ir_sensor():
     while True:
         print("1. Test IR Sensor\n"
@@ -129,8 +131,8 @@ def test_limit_switch():
             "2. Return to main screen\n")
         option = input("Select an option: ")
         if option == "1":
-            LS1 = 0
-            LS2 = 0
+            LS1 = 0  # TEMP VALUES: Replace with actual limit switch pin numbers
+            LS2 = 0  # GPIO pin numbers are 23, 7, 19, 26
             LS3 = 0
             LS4 = 0
             GPIO.setmode(GPIO.BCM)
