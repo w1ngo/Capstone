@@ -10,10 +10,10 @@ from hx711 import HX711
 
 def test_camera_picture():
     while True:
-        print("1. Top camera\n"
-            "2. Side camera\n"
-            "3. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Top camera\n"
+              "2) Side camera\n"
+              "3) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             camera = cv2.VideoCapture(0)
         elif option == "2":
@@ -35,9 +35,9 @@ def test_camera_picture():
 
 def test_ir_sensor():
     while True:
-        print("1. Test IR Sensor\n"
-            "2. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Test IR Sensor\n"
+              "2) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             IR = 0
             GPIO.setmode(GPIO.BCM)
@@ -50,17 +50,17 @@ def test_ir_sensor():
 
 def test_servo_motor():
     while True:
-        print("1. Open\n"
-            "2. Close\n"
-            "3. Choose position manually\n"
-            "4. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Open\n"
+              "2) Close\n"
+              "3) Choose position manually\n"
+              "4) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             dim.trapdoor_control("Open")
         elif option == "2":
             dim.trapdoor_control("Close")
         elif option == "3":
-            num = input("Enter value: ")
+            num = input("Enter value: ").strip()  # might need to limit this to certain range, or remove it altogether
             if num.isnumeric():
                 int(num)
             else:
@@ -81,10 +81,10 @@ def test_servo_motor():
 
 def test_load_cell():
     while True:
-        print("1. Raw output\n"
-            "2. Final weight\n"
-            "3. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Raw output\n"
+              "2) Final weight\n"
+              "3) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
             hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
@@ -103,12 +103,12 @@ def test_load_cell():
 
 def test_stepper_motor():
     while True:
-        print("1. Move Down\n"
-            "2. Move Up\n"
-            "3. Rotate out\n"
-            "4. Rotate in\n"
-            "5. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Move Down\n"
+              "2) Move Up\n"
+              "3) Rotate out\n"
+              "4) Rotate in\n"
+              "5) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             grav.motor_control("Vertical Down")
         elif option == "2":
@@ -127,9 +127,9 @@ def test_stepper_motor():
 
 def test_limit_switch():
     while True:
-        print("1. Test limit switches\n"
-            "2. Return to main screen\n")
-        option = input("Select an option: ")
+        print("1) Test limit switches\n"
+            "2) Return to main screen\n")
+        option = input("Select an option: ").strip()
         if option == "1":
             LS1 = 0  # TEMP VALUES: Replace with actual limit switch pin numbers
             LS2 = 0  # GPIO pin numbers are 23, 7, 19, 26
