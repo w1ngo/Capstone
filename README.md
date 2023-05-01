@@ -6,26 +6,13 @@ This repo will store the drivers written for all embedded systems used for the
 
 ___________________________________________________________________________________
 
-Customized bash files are written to automate some processes  when the shell is 
+Customized files are written to automate some processes when the shell is 
     initiated. The custom .bashrc (startup procedure) will have our code attached,
     so the user should only have to open a shell or command line and login to start 
     the program.
 
-The structure of the code will be mainly written in Python to ease understanding, 
-	development, and debugging. C++ was originally being used for image 
-	processing and accessed through a dynamically linked library, but
-	the opencv library for Python has proved to be quick enough.
-
 In order to use this repo successfully, clone the repository onto your host machine. 
-	If using a Windows machine, enable and use a Debian distro on WSL, and do all 
-	development through the command line to get as close to the target ennvironment
-    as possible, however some required packages are limited to running on a 
-    Raspberry Pi.
-
-Sourcing the init.sh script in the shell_scripts folder should update the device
-    and install the required packages and modules.
-
-Updates will be posted to the Github periodically (aiming for about once a week).
+Sourcing the init.sh script will update the device and install the required packages.
 ________________________________________________________________________________________
 Conceptual/Info on software:
 
