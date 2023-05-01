@@ -22,19 +22,19 @@ def take_pic(camera: int):
                          --quiet                \
                          --resolution 640x480   \
                          -s sharpness=15       \
-                         --frame 5              \
+                         --frame 8              \
                          --no-timestamp         \
                          --no-banner            \
                          --no-info              \
                          --greyscale            \
                          --save                 \
-                         image_cam1_5frames.jpg "
+                         image_cam1.jpg "
     else: 
         cmd = " fswebcam --device /dev/video2  \
 	               --quiet               \
 	               --resolution 640x480  \
 	               -s sharpness=15       \
-	               --frame 10            \
+	               --frame 8             \
 	               --no-timestamp        \
 	               --no-banner           \
 	               --no-info             \
@@ -90,13 +90,15 @@ def write_csv(filename: str, data):
 
 
 if __name__=="__main__":
-    mount_drive()
-    unmount_drive()
-    take_pic(1)
-    take_pic(2)
+    # mount_drive()
+    # unmount_drive()
+    # take_pic(1)
+    # take_pic(2)
 
-    frame = read_excel_file("SPR Gravity 2022.xlsx", "22SPR")
-    print(frame)
-    write_excel_file("gravity_copy.xlsx", frame)
-    append_excel_file("gravity_copy.xlsx", frame, "22SPR")
+    # frame = read_excel_file("SPR Gravity 2022.xlsx", "22SPR")
+    # print(frame)
+    # write_excel_file("gravity_copy.xlsx", frame)
+    # append_excel_file("gravity_copy.xlsx", frame, "22SPR")
+
+    take_pic( int(input('Enter camera 1/2: ')) )
 
