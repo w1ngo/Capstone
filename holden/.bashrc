@@ -1,11 +1,9 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 
-sudo apt update
-sudo apt upgrade
-sudo apt autoremove
-
-clear
+# not adding in apt update & upgrade intentionally
+   # do not want to accidentally cause dependency issues with
+   # future, unsupported updates
 
 # If not running interactively, don't do anything
 case $- in
@@ -20,8 +18,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=100
+HISTFILESIZE=200
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -32,28 +30,13 @@ if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
     debian_chroot=$(cat /etc/debian_chroot)
 fi
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color|*-256color) color_prompt=yes;;
-esac
-
-
-if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # enable color support of ls and also add handy aliases
 if [ -x /usr/bin/dircolors ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 fi
-
-# Source alias definitions by referencing the alias file
-if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
-fi
+source ~/.bash_aliases
 
 # enable programmable completion features (you don't ned to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
@@ -72,5 +55,3 @@ if test -f "./bash_history"; then
 fi
 
 PS1="\[\033[1;35m\]\u@\W ->\[\033[32m\] "
-
-sudo /etc/init.d/dbus start &> /dev/null
