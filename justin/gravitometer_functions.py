@@ -13,7 +13,7 @@ def motor_control(motor):
     if motor == "Vertical Down":
         DIR = 11
         STEP = 8
-        LS = 0  # TEMP VALUE (0): Limit switch 1
+        LS = 23  # Limit switch 1
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -35,7 +35,7 @@ def motor_control(motor):
     elif motor == "Vertical Up":
         DIR = 11
         STEP = 8
-        LS = 0  # TEMP VALUE (0): Limit switch 2
+        LS = 7  # Limit switch 2
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -57,7 +57,7 @@ def motor_control(motor):
     elif motor == "Rotational Out":
         DIR = 12
         STEP = 13
-        LS = 0  # TEMP VALUE (0): Limit switch 3
+        LS = 19  # Limit switch 3
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -81,7 +81,7 @@ def motor_control(motor):
     elif motor == "Rotational In":
         DIR = 12
         STEP = 13
-        LS = 0  # TEMP VALUE (0): Limit switch 4
+        LS = 26  # Limit switch 4
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -107,7 +107,8 @@ def motor_control(motor):
 
 
 """
-Function to read load cell value. 
+Function to read load cell value and calculate weight.
+Returns weight of load cell 1 and 2.
 """
 def read_load_cell(tare1, tare2, ratio1, ratio2):
     GPIO.setmode(GPIO.BCM)
@@ -118,15 +119,15 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
     data1 = hx1.get_raw_data_mean(readings=30)
     data2 = hx2.get_raw_data_mean(readings=30)
 
-    weight1 = (data1 - tare1) / ratio1  # Manual tare and unit conversion
+    weight1 = (data1 - tare1) / ratio1  # Calculate weight
     weight2 = (data2 - tare2) / ratio2
-
-    # possibly average the two load cells here
-    # weight = (weight1 + weight2) / 2
 
     return weight1, weight2
 
-
+"""
+Function to measure basket tare weight in air and water.
+Returns tare in air and water of load cell 1 and 2.
+"""
 def measure_tare():
     GPIO.setmode(GPIO.BCM)
 
@@ -145,7 +146,10 @@ def measure_tare():
     
     return air_tare1, air_tare2, water_tare1, water_tare2
 
-
+"""
+Function to measure the digital to grams conversion ratio of the load cells.
+Returns the ratio of load cell 1 and 2.
+"""
 def measure_ratio(known_weight, tare1, tare2):
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
