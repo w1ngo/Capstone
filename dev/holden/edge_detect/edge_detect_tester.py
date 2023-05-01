@@ -3,6 +3,7 @@ import detection_functions as funcs
 import refine_parameters   as refine
 import random
 from sys import platform
+from time import perf_counter
 
 if __name__ == "__main__":
     
@@ -15,12 +16,13 @@ if __name__ == "__main__":
                       r"./images/IMG_4013.jpg" ]
 
     elif platform == "win32" or platform == "win64":
-        filenames = [ r".\images\isolated_potato.jpg",  \
-                      r".\images\isolated_potato2.jpg", \
-                      r".\images\isolated_potato3.png", \
-                      r".\images\IMG_4011.jpg",         \
-                      r".\images\IMG_4012.jpg",         \
-                      r".\images\IMG_4013.jpg" ]
+        filenames = [ r".\images\isolated_potato.jpg", \
+                      r".\images\isolated_potato2.jpg",\
+                      r".\images\isolated_potato3.png",\
+                      r".\images\20230406_180852.jpg", \
+                      r".\images\20230406_180906.jpg", \
+                      r".\images\20230406_180919.jpg", \
+                      r".\images\20230406_180931.jpg" ]
 
     if input("Enter r to refine parameter options or t test edge detection as-is: ") in ("R", "r"):
         _, data = refine.multi_refine( [filename1, filename2, filename3] )
