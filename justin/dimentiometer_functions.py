@@ -8,7 +8,7 @@ Function for capturing an image with the USB cameras.
 """
 
 def take_picture(camera):
-    IR = 0
+    IR = 22
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(IR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     print("Waiting for potato...")
@@ -58,10 +58,12 @@ def trapdoor_control(option):
     pwm = GPIO.PWM(servoPIN, 50)    # Frequency of 50 Hz
     pwm.start(0)  # Initialize
 
+    # Open trapdoor
     if option == "Open":
         pwm.ChangeDutyCycle(0)  # TEMP VALUE (0): calibrate and change to desired open position value
         sleep(0)    #TEMP VALUE (0): change to desired wait time
 
+    # Close trapdoor
     elif option == "Close":
         pwm.ChangeDutyCycle(0)  # TEMP VALUE (0): calibrate and change to desired closed position value
         sleep(0)    #TEMP VALUE (0): change to desired wait time
