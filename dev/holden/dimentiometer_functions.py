@@ -34,46 +34,6 @@ def calibrate_camera( camera ):
 
 
 '''
-This function takes a picture remotely using the connection to the camera. It
-    only takes one picture from one camera, so it accepts one input, namely the
-    designation of "Top" camera or "Side" camera. It returns a 2-D array of tuples.
-    The tuples represent the RGB intensities of each pixel, and element 0-0 represents
-    the pixel in the top-left corner of the image (relative to the perspective of someone
-    looking through the camera lens upon the surface photographed).
-'''
-def take_picture( camera ):
-    if camera == "Top":
-        0 == 0
-
-    elif camera == "Bottom":
-        0 == 0
-
-    else:
-        0 == 0
-
-    return
-    #ENDOF: take_picture(camera)
-
-
-'''
-
-'''
-def measure_potato():
-    
-    return
-    #ENDOF: measure_potato()
-
-
-'''
-
-'''
-def record_data():
-    
-    return
-    #ENDOF: record_data()
-
-
-'''
 This function performs the commands needed to open or close the trapdoor. It
     accepts one parameter, a String designating the desire to either "Open"
     or "Close" the trapdoor. It return true if no errors were encountered,
@@ -91,5 +51,3 @@ def control_trapdoor( option ):
 
     return True
     #ENDOF: control_trapdoor(option)
-
-
