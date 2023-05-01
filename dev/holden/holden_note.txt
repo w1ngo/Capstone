@@ -1,17 +1,10 @@
-
 Want to speed up the reading-in of the text file
 A few ways to do this 
-
 read-in file during initialization (in the bashrc...make it
 	the first action in the driver?)
-
 write to a temporary .csv with an option to add to the end,
 	write to a new excel file, or leave-as is/rename 
 	temp file
-
 spawn a separate process (using pool for multiprocessing) that
 	will start to read in the dataframe while doing the 
 	other user i/o (e.g., which modules are being used)
-
-I believe that the best way to do it will be option #2...send it
-

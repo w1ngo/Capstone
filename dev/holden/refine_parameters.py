@@ -40,5 +40,3 @@ def multi_refine(filename_ls):
         param_file = f"param_refine_{idx}.txt"
         print( f"Pass with image at {img_filename} complete.\n\n" )
     print( "Refining completed" )
-
-
