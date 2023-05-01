@@ -13,7 +13,7 @@ def motor_control(motor):
     if motor == "Vertical Down":
         DIR = 11
         STEP = 8
-        LS = 0  # TEMP VALUE (0): Limit switch 1
+        LS = 23  # Limit switch 1
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -35,7 +35,7 @@ def motor_control(motor):
     elif motor == "Vertical Up":
         DIR = 11
         STEP = 8
-        LS = 0  # TEMP VALUE (0): Limit switch 2
+        LS = 7  # Limit switch 2
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -57,7 +57,7 @@ def motor_control(motor):
     elif motor == "Rotational Out":
         DIR = 12
         STEP = 13
-        LS = 0  # TEMP VALUE (0): Limit switch 3
+        LS = 19  # Limit switch 3
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -81,7 +81,7 @@ def motor_control(motor):
     elif motor == "Rotational In":
         DIR = 12
         STEP = 13
-        LS = 0  # TEMP VALUE (0): Limit switch 4
+        LS = 26  # Limit switch 4
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -120,9 +120,6 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
 
     weight1 = (data1 - tare1) / ratio1  # Manual tare and unit conversion
     weight2 = (data2 - tare2) / ratio2
-
-    # possibly average the two load cells here
-    # weight = (weight1 + weight2) / 2
 
     return weight1, weight2
 

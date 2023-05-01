@@ -5,6 +5,10 @@ import json
 import os.path
 
 # DO NOT run until components are tested and temp values are replaced
+"""
+User interface function that prints the main menu and gets an input from the user.
+Calls the required functions based on the option chosen.
+"""
 def main():
     # Reset basket position (Uncomment when code is ready)
     # grav.motor_control("Vertical Up")
@@ -28,19 +32,35 @@ def main():
         if option == "1":  
             # Check if tare and ratio files exist and aren't empty
             if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
-                for i in range(10):  # Loop for each potato
-                    top_values = dim.take_picture("Top")
-                    side_values = dim.take_picture("Side")
+                #for i in range(10):  # Loop for each potato
+                    #top_values = dim.take_picture("Top")
+                    #side_values = dim.take_picture("Side")
+
+
                     # Edge Detection
                     # Measure Potato
-
+                
+                # Get tare
                 with open('tare.json', 'r') as file:
                     tare_dict = json.load(file)
+
+                # Get ratio
                 with open('ratio.json', 'r') as file:
                     ratio_dict = json.load(file)
+
+                # Measure weight in air
                 air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+                
+
+                # Measure weight in water
                 grav.motor_control("Vertical Down")
                 water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+                # Calculate specific gravity
+                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
+                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
+                avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
+
                 grav.motor_control("Vertical Up")
                 # potential sleep
                 grav.motor_control("Rotational Out")
@@ -53,68 +73,95 @@ def main():
         # Run Gravitometer Only
         elif option == "2":
             if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
+                # Get tare
                 with open('tare.json', 'r') as file:
                     tare_dict = json.load(file)
+
+                # Get ratio
                 with open('ratio.json', 'r') as file:
                     ratio_dict = json.load(file)
+
+                # Measure weight in air
                 air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+                # Measure weight in water
                 grav.motor_control("Vertical Down")
                 water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+                # Calculate specific gravity
+                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
+                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
+                avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
+
+
                 grav.motor_control("Vertical Up")
                 # potential sleep
                 grav.motor_control("Rotational Out")
                 # potential sleep
                 grav.motor_control("Rotational In")
+
                 # Store data
             else:
                 print("No tare file found. Please calibrate tare first.")
         
         # Measure weight of basket (tare) automatically
         elif option == "3":
+            # Find tare
             air_tare1, air_tare2, water_tare1, water_tare2 = grav.measure_tare()
+
+            # Save data to file
             tare_dict = {"Air1": air_tare1, "Air2": air_tare2, "Water1": water_tare1, "Water2": water_tare2}
             with open('tare.json', 'w') as file:
                 json.dump(tare_dict, file, indent=4)
         
         # Input tare values manually
         elif option == "4":
+            # Input tare values
             air_tare1 = input("Enter out-of-water tare for load cell 1: ").strip()
             air_tare2 = input("Enter out-of-water tare for load cell 2: ").strip()
             water_tare1 = input("Enter in-water tare for load cell 1: ").strip()
             water_tare2 = input("Enter in-water tare for load cell 2: ").strip()
 
+            # Save data to file
             if air_tare1.replace('.', '', 1).isnumeric() and air_tare2.replace('.', '', 1).isnumeric() and water_tare1.replace('.', '', 1).isnumeric() and water_tare2.replace('.', '', 1).isnumeric():
                 tare_dict = {"Air1": float(air_tare1), "Air2": float(air_tare2), "Water1": float(water_tare1), "Water2": float(water_tare2)}
                 with open('tare.json', 'w') as file:
                     json.dump(tare_dict, file, indent=4)
             else:
-                print("Tare values must be numeric")
+                print("Tare values must be numeric.")
        
         # Measure digital-to-grams conversion ratio of load cells
         elif option == "5":
+            # Find ratio
             if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0:
                 with open('tare.json', 'r') as file:
                     tare_dict = json.load(file)
                 known_weigtht = input("Enter known weight of object in basket (grams): ").strip()
-                ratio1, ratio2 = grav.measure_ratio(known_weigtht, tare_dict['Air1'], tare_dict['Air2'])
-                ratio_dict = {"Ratio1": ratio1, "Ratio2": ratio2}
-                with open('ratio.json', 'w') as file:
-                    json.dump(ratio_dict, file, indent=4)
+                if known_weigtht.replace('.', '', 1).isnumeric():
+                    ratio1, ratio2 = grav.measure_ratio(known_weigtht, tare_dict['Air1'], tare_dict['Air2'])
 
+                    # Save data to file
+                    ratio_dict = {"Ratio1": ratio1, "Ratio2": ratio2}
+                    with open('ratio.json', 'w') as file:
+                        json.dump(ratio_dict, file, indent=4)
+                else:
+                    print("Known weight must be numeric.")
             else:
                 print("No tare file found. Please calibrate tare first.")
 
         # Input conversion ratio manually
         elif option == "6":
+            # Input ratio values
             ratio1 = input("Enter conversion ratio for load cell 1: ").strip()
             ratio2 = input("Enter conversion ratio for load cell 2: ").strip()
 
+            # Save data to file
             if ratio1.replace('.', '', 1).isnumeric() and ratio2.replace('.', '', 1).isnumeric():
                 ratio_dict = {"Ratio1": float(ratio1), "Ratio2": float(ratio2)}
                 with open('ratio.json', 'w') as file:
                     json.dump(ratio_dict, file, indent=4)
             else:
-                print("Ratio values must be numeric")
+                print("Ratio values must be numeric.")
      
         # Reset position of basket
         elif option == "7":
@@ -137,6 +184,10 @@ def main():
             print("Invalid Input.")
 
 
+"""
+Test options function that prints the test menu and gets an input from the user.
+Calls the corresponding test function for the option chosen.
+"""
 def test_options(option):
     print("\n\nWhich component to test?\n\n"
           "1) Camera Pictures\n"
@@ -177,6 +228,9 @@ def test_options(option):
     return
 
 
+"""
+Help options function that prints a description of each main menu option.
+"""
 def help_options(option):
     # "help" command
     if option.find(" ") == -1:

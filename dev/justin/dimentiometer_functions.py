@@ -8,7 +8,7 @@ Function for capturing an image with the USB cameras.
 """
 
 def take_picture(camera):
-    IR = 0
+    IR = 22
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(IR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     print("Waiting for potato...")

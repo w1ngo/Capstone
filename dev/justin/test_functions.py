@@ -39,7 +39,7 @@ def test_ir_sensor():
               "2) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            IR = 0
+            IR = 22
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(IR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             print("IR: ", GPIO.input(IR), "\n")
@@ -131,16 +131,16 @@ def test_limit_switch():
             "2) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            LS1 = 0  # TEMP VALUES: Replace with actual limit switch pin numbers
-            LS2 = 0  # GPIO pin numbers are 23, 7, 19, 26
-            LS3 = 0
-            LS4 = 0
+            LS1 = 23    # Down
+            LS2 = 7     # Up
+            LS3 = 19    # Out
+            LS4 = 26    # In
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(LS1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            print("LS1: ", GPIO.input(LS1), "\nLS2: ", GPIO.input(LS2), "\nLS3: ", GPIO.input(LS3), "\nLS4: ", GPIO.input(LS4), "\n")
+            print("LS1 (Down): ", GPIO.input(LS1), "\nLS2 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
             GPIO.cleanup()
         else:
             break
