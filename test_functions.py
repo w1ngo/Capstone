@@ -151,4 +151,4 @@ def test_limit_switch():
             GPIO.setup(7, GPIO.OUT)
             while True:
                 GPIO.output(7, GPIO.HIGH)
-            
+
