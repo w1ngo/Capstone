@@ -12,8 +12,8 @@ def motor_control(motor):
     CCW = 0
     if motor == "Vertical Down":
         DIR = 11
-        STEP = 8
-        LS = 23  # Limit switch 1
+        STEP = 9
+        LS = 7  # Limit switch 1
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -22,11 +22,13 @@ def motor_control(motor):
         GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to downwards direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
+        print("test")
         while GPIO.input(LS):
+            print("yes")
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.0002)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.0002) # TEMP VALUE (0.005): Affects PWM LOW duration
 
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 1
             #    break
@@ -34,8 +36,8 @@ def motor_control(motor):
     
     elif motor == "Vertical Up":
         DIR = 11
-        STEP = 8
-        LS = 7  # Limit switch 2
+        STEP = 9
+        LS = 23  # Limit switch 2
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -43,13 +45,16 @@ def motor_control(motor):
 
         GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to upwards direction
         sleep(1)
+        print("test")
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
-        while GPIO.input(LS):
+        test_val = 1
+        while GPIO.input(LS) or test_val:
+            print(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.0002)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
-
+            sleep(0.0002) # TEMP VALUE (0.005): Affects PWM LOW duration
+            test_val = GPIO.input(LS)
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 2
             #    break
 
