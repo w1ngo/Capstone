@@ -126,7 +126,10 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
 
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
-
+    sleep(1)
+    data1 = hx1.get_raw_data_mean(readings=30)
+    data2 = hx2.get_raw_data_mean(readings=30)
+    sleep(1)
     data1 = hx1.get_raw_data_mean(readings=30)
     data2 = hx2.get_raw_data_mean(readings=30)
 
@@ -145,7 +148,10 @@ def measure_tare():
 
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
-
+    sleep(1)
+    air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
+    air_tare2 = hx2.get_raw_data_mean(readings=30)
+    sleep(1)
     air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
     air_tare2 = hx2.get_raw_data_mean(readings=30)
     print(air_tare1, air_tare2)
@@ -167,7 +173,10 @@ def measure_ratio(known_weight, tare1, tare2):
     GPIO.setmode(GPIO.BCM)
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
-    
+    sleep(1)
+    ratio1 = hx1.get_raw_data_mean(readings=30)
+    ratio2 = hx2.get_raw_data_mean(readings=30)
+    sleep(1)
     ratio1 = hx1.get_raw_data_mean(readings=30)
     ratio2 = hx2.get_raw_data_mean(readings=30)
     print(ratio1,ratio2)
