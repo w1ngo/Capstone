@@ -1,5 +1,6 @@
 import dimentiometer_functions as dim
 import gravitometer_functions as grav
+import peripheral_functions as func
 import test_functions as test
 import json
 import os.path
@@ -9,15 +10,15 @@ import RPi.GPIO as GPIO
 User interface function that prints the main menu and gets an input from the user.
 Calls the required functions based on the option chosen.
 """
-def main():
+def run():
     GPIO.setwarnings(False)
     while(True):
         print("\n\nTuber Analysis System\n"
               "-----------------------------------------------------\n"
               "1) Run Dimentiometer & Gravitometer\n"
               "2) Run Gravitometer Only\n"
-              "3) Measure Tare Automatically\n"
-              "4) Input Tare Manually\n"
+              "3) Tare Automatically\n"
+              "4) Tare Manually\n"
               "5) Measure Load Cell Conversion Ratio Automatically\n"
               "6) Input Load Cell Conversion Ratio Manually\n"
               "7) Reset Position\n"
@@ -90,7 +91,7 @@ def main():
                 specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
                 specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
                 avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
-
+                print(specific_gravity2)
 
                 grav.motor_control("Vertical Up")
                 # potential sleep
@@ -99,8 +100,10 @@ def main():
                 grav.motor_control("Rotational In")
 
                 # Store data
+                dat = ["test_label", (air_weight1 + air_weight2) / 2, (water_weight1 + water_weight2) / 2, avg_specific_gravity]
+                func.write_csv( "test_data.csv", [dat] )
             else:
-                print("No tare file found. Please calibrate tare first.")
+                print("No tare file found. Please tare first.")
         
         # Measure weight of basket (tare) automatically
         elif option == "3":
@@ -115,8 +118,8 @@ def main():
         # Input tare values manually
         elif option == "4":
             # Input tare values
-            air_tare1 = input("Enter out-of-water tare for load cell 1: ").strip()
-            air_tare2 = input("Enter out-of-water tare for load cell 2: ").strip()
+            air_tare1   = input("Enter out-of-water tare for load cell 1: ").strip()
+            air_tare2   = input("Enter out-of-water tare for load cell 2: ").strip()
             water_tare1 = input("Enter in-water tare for load cell 1: ").strip()
             water_tare2 = input("Enter in-water tare for load cell 2: ").strip()
 
@@ -323,4 +326,4 @@ def help_options(option):
 
 
 if __name__ == '__main__':
-    main()
+    run()
