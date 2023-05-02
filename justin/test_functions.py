@@ -116,10 +116,10 @@ def test_stepper_motor():
         elif option == "2":
             grav.motor_control("Vertical Up")
         elif option == "3":
-            grav.motor_control("Vertical Up")
+            #grav.motor_control("Vertical Up")
             grav.motor_control("Rotational Out")
         elif option == "4":
-            grav.motor_control("Vertical Up")
+            #grav.motor_control("Vertical Up")
             grav.motor_control("Rotational In")
         else:
             #grav.motor_control("Vertical Up")
@@ -142,12 +142,8 @@ def test_limit_switch():
             GPIO.setup(LS2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            print("LS1 (Down): ", GPIO.input(LS1), "\nLS2 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
             while True:
-                print(GPIO.input(LS2))
-            GPIO.cleanup()
-        elif option == '2':
-            while True:
-                print(GPIO.input(LS2))
+                print("LS1 (Down): ", GPIO.input(LS1), "\nLS2 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
+                sleep(1)
         else:
             break

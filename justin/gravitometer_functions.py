@@ -46,7 +46,6 @@ def motor_control(motor):
 
         GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to upwards direction
         sleep(1)
-        print("test")
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
         queue = [1,1,1]
         while any(queue): 
@@ -69,7 +68,7 @@ def motor_control(motor):
         GPIO.setup(STEP, GPIO.OUT)
         GPIO.setup(LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to first direction
+        GPIO.output(DIR, CCW)    # TEMP VALUE (CW): Change to first direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
         queue = [1,1,1]
@@ -96,7 +95,7 @@ def motor_control(motor):
         GPIO.setup(STEP, GPIO.OUT)
         GPIO.setup(LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to second direction
+        GPIO.output(DIR, CW)    # TEMP VALUE (CCW): Change to second direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
         queue = [1,1,1]
@@ -131,8 +130,9 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
     data1 = hx1.get_raw_data_mean(readings=30)
     data2 = hx2.get_raw_data_mean(readings=30)
 
-    weight1 = (data1 - tare1) / ratio1  # Calculate weight
-    weight2 = (data2 - tare2) / ratio2
+    weight1 = abs(data1 - tare1) / ratio1  # Calculate weight
+    weight2 = abs(data2 - tare2) / ratio2
+    print(weight1,weight2)
 
     return weight1, weight2
 
@@ -150,12 +150,12 @@ def measure_tare():
     air_tare2 = hx2.get_raw_data_mean(readings=30)
     print(air_tare1, air_tare2)
     
-    motor_control("Vertical Down")
+    #motor_control("Vertical Down")
 
     water_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in water
     water_tare2 = hx2.get_raw_data_mean(readings=30)
 
-    motor_control("Vertical Up")
+    #motor_control("Vertical Up")
     
     return air_tare1, air_tare2, water_tare1, water_tare2
 
@@ -164,14 +164,16 @@ Function to measure the digital to grams conversion ratio of the load cells.
 Returns the ratio of load cell 1 and 2.
 """
 def measure_ratio(known_weight, tare1, tare2):
+    GPIO.setmode(GPIO.BCM)
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
     
     ratio1 = hx1.get_raw_data_mean(readings=30)
     ratio2 = hx2.get_raw_data_mean(readings=30)
-
-    ratio1 = (ratio1 - tare1) / known_weight
-    ratio2 = (ratio2 - tare2) / known_weight
-
+    print(ratio1,ratio2)
+    ratio1 = abs(ratio1 - tare1) / known_weight
+    ratio2 = abs(ratio2 - tare2) / known_weight
+    print(ratio1,ratio2)
+    GPIO.cleanup()
     return ratio1, ratio2
 
