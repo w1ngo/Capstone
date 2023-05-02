@@ -80,14 +80,15 @@ def test_servo_motor():
     
 
 def test_load_cell():
+    GPIO.setmode(GPIO.BCM)
     while True:
         print("1) Raw output\n"
               "2) Final weight\n"
               "3) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
-            hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
+            hx1 = HX711(dout_pin=14, pd_sck_pin=4)  # Create hx711 object for load cell 1
+            hx2 = HX711(dout_pin=15, pd_sck_pin=17)  # Create hx711 object for load cell 2
             print("LC1: ", hx1.get_raw_data_mean(readings=30), "\nLC2: ", hx2.get_raw_data_mean(readings=30), "\n")
         elif option == "2":
             if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
@@ -99,6 +100,7 @@ def test_load_cell():
                 print("LC1:", air_weight1, "\nLC2: ", air_weight2, "\n")
         else:
             break
+    GPIO.cleanup()
 
 
 def test_stepper_motor():

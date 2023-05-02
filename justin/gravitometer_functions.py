@@ -136,14 +136,17 @@ def measure_tare():
 
     air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
     air_tare2 = hx2.get_raw_data_mean(readings=30)
-
+    print(air_tare1, air_tare2)
+    while True:
+        continue
+    '''
     motor_control("Vertical Down")
 
     water_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in water
     water_tare2 = hx2.get_raw_data_mean(readings=30)
 
     motor_control("Vertical Up")
-    
+    '''
     return air_tare1, air_tare2, water_tare1, water_tare2
 
 """
