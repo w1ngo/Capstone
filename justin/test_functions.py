@@ -133,17 +133,22 @@ def test_limit_switch():
             "2) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            LS1 = 7    # Down
+            LS1 = 24    # Down
             LS2 = 23     # Up
-            LS3 = 0    # Out
-            LS4 = 0    # In
+            LS3 = 19    # Out
+            LS4 = 26   # In
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(LS1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             while True:
-                print("LS1 (Down): ", GPIO.input(LS1), "\nLS2 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
+
+                print("LS2 (Down): ", GPIO.input(LS1), "\nLS1 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
                 sleep(1)
         else:
-            break
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(7, GPIO.OUT)
+            while True:
+                GPIO.output(7, GPIO.HIGH)
+            

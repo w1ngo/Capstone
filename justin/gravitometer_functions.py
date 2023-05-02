@@ -13,7 +13,7 @@ def motor_control(motor):
     if motor == "Vertical Down":
         DIR = 11
         STEP = 9
-        LS = 7  # Limit switch 1
+        LS = 24  # Limit switch 1
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -27,9 +27,9 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.0005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.00025)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.0005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.00025) # TEMP VALUE (0.005): Affects PWM LOW duration
 
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 1
             #    break
@@ -52,9 +52,9 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.0005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.00025)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.0005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.00025) # TEMP VALUE (0.005): Affects PWM LOW duration
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 2
             #    break
 
@@ -62,7 +62,7 @@ def motor_control(motor):
     elif motor == "Rotational Out":
         DIR = 12
         STEP = 6
-        LS = 0  # Limit switch 3
+        LS = 19  # Limit switch 3
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -76,20 +76,18 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.004)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.004) # TEMP VALUE (0.005): Affects PWM LOW duration
             
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 3
             #    break
-
-        sleep(10)   # TEMP VALUE (10): Number of seconds to wait before lifting basket back up
 
     
     elif motor == "Rotational In":
         DIR = 12
         STEP = 6
-        LS = 0  # Limit switch 4
+        LS = 26  # Limit switch 4
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -103,17 +101,17 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.004)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.005) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.004) # TEMP VALUE (0.005): Affects PWM LOW duration
             
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 4
             #    break
     else:
-        GPIO.cleanup()
+        #GPIO.cleanup()
         return False
 
-    GPIO.cleanup()
+    #GPIO.cleanup()
     return True
 
 
@@ -126,9 +124,6 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
 
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
-    sleep(1)
-    data1 = hx1.get_raw_data_mean(readings=30)
-    data2 = hx2.get_raw_data_mean(readings=30)
     sleep(1)
     data1 = hx1.get_raw_data_mean(readings=30)
     data2 = hx2.get_raw_data_mean(readings=30)
@@ -151,17 +146,14 @@ def measure_tare():
     sleep(1)
     air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
     air_tare2 = hx2.get_raw_data_mean(readings=30)
-    sleep(1)
-    air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
-    air_tare2 = hx2.get_raw_data_mean(readings=30)
     print(air_tare1, air_tare2)
     
-    #motor_control("Vertical Down")
+    motor_control("Vertical Down")
 
     water_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in water
     water_tare2 = hx2.get_raw_data_mean(readings=30)
 
-    #motor_control("Vertical Up")
+    motor_control("Vertical Up")
     
     return air_tare1, air_tare2, water_tare1, water_tare2
 
@@ -173,9 +165,6 @@ def measure_ratio(known_weight, tare1, tare2):
     GPIO.setmode(GPIO.BCM)
     hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
     hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
-    sleep(1)
-    ratio1 = hx1.get_raw_data_mean(readings=30)
-    ratio2 = hx2.get_raw_data_mean(readings=30)
     sleep(1)
     ratio1 = hx1.get_raw_data_mean(readings=30)
     ratio2 = hx2.get_raw_data_mean(readings=30)
