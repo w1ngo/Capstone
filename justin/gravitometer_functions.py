@@ -22,13 +22,14 @@ def motor_control(motor):
         GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to downwards direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
-        print("test")
-        while GPIO.input(LS):
-            print("yes")
+        queue = [1,1,1]
+        while any(queue): 
+            queue.pop(0)
+            queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.0002)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.0005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.0002) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.0005) # TEMP VALUE (0.005): Affects PWM LOW duration
 
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 1
             #    break
@@ -47,22 +48,22 @@ def motor_control(motor):
         sleep(1)
         print("test")
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
-        test_val = 1
-        while GPIO.input(LS) or test_val:
-            print(GPIO.input(LS))
+        queue = [1,1,1]
+        while any(queue): 
+            queue.pop(0)
+            queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.0002)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.0005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.0002) # TEMP VALUE (0.005): Affects PWM LOW duration
-            test_val = GPIO.input(LS)
+            sleep(0.0005) # TEMP VALUE (0.005): Affects PWM LOW duration
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 2
             #    break
 
     
     elif motor == "Rotational Out":
         DIR = 12
-        STEP = 13
-        LS = 19  # Limit switch 3
+        STEP = 6
+        LS = 0  # Limit switch 3
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -71,7 +72,10 @@ def motor_control(motor):
         GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to first direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
-        while GPIO.input(LS):
+        queue = [1,1,1]
+        while any(queue): 
+            queue.pop(0)
+            queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
             sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
@@ -85,8 +89,8 @@ def motor_control(motor):
     
     elif motor == "Rotational In":
         DIR = 12
-        STEP = 13
-        LS = 26  # Limit switch 4
+        STEP = 6
+        LS = 0  # Limit switch 4
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(DIR, GPIO.OUT)
         GPIO.setup(STEP, GPIO.OUT)
@@ -95,7 +99,10 @@ def motor_control(motor):
         GPIO.output(DIR, CCW)    # TEMP VALUE (CCW): Change to second direction
         sleep(1)
         # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
-        while GPIO.input(LS):
+        queue = [1,1,1]
+        while any(queue): 
+            queue.pop(0)
+            queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
             sleep(0.005)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
@@ -142,16 +149,14 @@ def measure_tare():
     air_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in air
     air_tare2 = hx2.get_raw_data_mean(readings=30)
     print(air_tare1, air_tare2)
-    while True:
-        continue
-    '''
+    
     motor_control("Vertical Down")
 
     water_tare1 = hx1.get_raw_data_mean(readings=30)  # Measure tare in water
     water_tare2 = hx2.get_raw_data_mean(readings=30)
 
     motor_control("Vertical Up")
-    '''
+    
     return air_tare1, air_tare2, water_tare1, water_tare2
 
 """
