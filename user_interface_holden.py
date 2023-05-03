@@ -7,6 +7,7 @@ import os.path
 import RPi.GPIO as GPIO
 
 def greeting():
+    reset_position()
     print( "Welcome to the Agrilife Tuber Analysis System!" )
     print( "______________________________________________" )
     print( "What procedures will be performed during this trial?\n"
@@ -39,7 +40,7 @@ def calibrate_scale():
     #ENDOF: calibrate_scale()
 
 
-def gravitometer(id=func.read_barcode()):
+def gravitometer(id):
     if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 \
        and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
         with open('tare.json', 'r') as file: tare_dict   = json.load(file)
@@ -54,17 +55,14 @@ def gravitometer(id=func.read_barcode()):
         wet_w1, wet_w2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
 
         # Calculate specific gravity
-        sg1 = air_w1 / (air_w1 - wet_w1)
-        sg2 = air_w2 / (air_w2 - wet_w2)
-        specific_gravity = (sg1 + sg2) / 2
+        specific_gravity = air_w2 / (air_w2 - wet_w2)
 
         grav.motor_control("Vertical Up")
         grav.motor_control("Rotational Out")
-        while True:
-            if input("Press enter when the potatoes are dumped..."): break
+        _ = input("Press enter when the potatoes are dumped...")
         grav.motor_control("Rotational In")
 
-        return id, air_w, wet_w, specific_gravity
+        return air_w2, wet_w2, specific_gravity
 
     # if one of the if conditions failed:
     print("Necessary scale calibration data not present, running calibration") 
@@ -77,31 +75,46 @@ def gravitometer(id=func.read_barcode()):
     #ENDOF: gravitometer()
 
 
+def reset_position():
+    grav.motor_control("Vertical Up")
+    grav.motor_control("Rotational In")
+    #ENDOF: reset_position()
+
+
 def run():
     GPIO.setwarnings(False)
-
     option = greeting()
     if option == 1:
-        # gravitometer only
+        print("Gravitometer selected")
         while True:
-            if input("Ready for another trial? [Y/n] ") in ("Y", "y"):
-                gravitometer()
+            if input("Ready for a trial? [Y/n] ") in ("Y", "y"):
+                print("Starting trial.")
+                code = func.read_barcode()
+                air, wet, sg = gravitometer(code)
                 continue
             
             # if the user did not indicate "yes", then record data and exit
             while True:
-                write_option = input("Enter 1 to write data to a new .csv, or 2 to add to the end of an existing file")
+                op = input("Enter 1 to recalibrate, or 2 to store data and exit. ")
 
-                if write_option == "1":
-                    filename = input("Enter your desired filename (leave off the .csv): ")
+                if op == "1":
+                    tare_scale()
+                    print("Scale has been rezeroed.")
+                    if input("Would you like to recalibrate with a known weight? [Y/n]") in ("Y", "y"):
+                        calibrate_scale()
+                        print("Scale has been recalibrated")
+                    break
 
-
-                if write_option == "2":
-                    pass
+                if op == "2":
+                    fileType = input("Enter 1 to write to a new csv, or 2 to add onto an exiting file")
+                    if fileType == "1":
+                        pass
+                    
+                    if fileType == "2":
+                        pass
 
                 print("Input not recognized. Please enter the digit 1 or the digit 2.")
             
-
 
     if option == 2:
         # gravitometer and dimentiometer
@@ -110,181 +123,6 @@ def run():
 
 
 
-'''
-def run():
-    while(True):
-        print("\n\nTuber Analysis System\n"
-              "-----------------------------------------------------\n"
-              "1) Run Dimentiometer & Gravitometer\n"
-              "2) Run Gravitometer Only\n"
-              "3) Tare Automatically\n"
-              "4) Tare Manually\n"
-              "5) Measure Load Cell Conversion Ratio Automatically\n"
-              "6) Input Load Cell Conversion Ratio Manually\n"
-              "7) Reset Position\n"
-              "8) Test Functions\n"
-              "9) Exit\n"
-              "(Type \"help\" for a more details)\n")
-        option = input("Select an option: ").strip()
-        
-        # Run Dimentiometer & Gravitometer
-        if option == "1":  
-            # Check if tare and ratio files exist and aren't empty
-            if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
-                #for i in range(10):  # Loop for each potato
-                    #top_values = dim.take_picture("Top")
-                    #side_values = dim.take_picture("Side")
-
-
-                    # Edge Detection
-                    # Measure Potato
-                
-                # Get tare
-                with open('tare.json', 'r') as file:
-                    tare_dict = json.load(file)
-
-                # Get ratio
-                with open('ratio.json', 'r') as file:
-                    ratio_dict = json.load(file)
-
-                # Measure weight in air
-                air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-                
-
-                # Measure weight in water
-                grav.motor_control("Vertical Down")
-                water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Calculate specific gravity
-                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
-                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
-                #avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
-                print(specific_gravity1, specific_gravity2)
-                grav.motor_control("Vertical Up")
-                # potential sleep
-                grav.motor_control("Rotational Out")
-                # potential sleep
-                grav.motor_control("Rotational In")
-                # Store data
-            else:
-                print("No tare file found. Please calibrate tare first.")
-
-        # Run Gravitometer Only
-        elif option == "2":
-            if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
-                # Get tare
-                with open('tare.json', 'r') as file:
-                    tare_dict = json.load(file)
-
-                # Get ratio
-                with open('ratio.json', 'r') as file:
-                    ratio_dict = json.load(file)
-
-                # Measure weight in air
-                air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Measure weight in water
-                grav.motor_control("Vertical Down")
-                water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Calculate specific gravity
-                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
-                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
-                avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
-                print(specific_gravity2)
-
-                grav.motor_control("Vertical Up")
-                # potential sleep
-                grav.motor_control("Rotational Out")
-                # potential sleep
-                grav.motor_control("Rotational In")
-
-                # Store data
-                dat = ["test_label", (air_weight1 + air_weight2) / 2, (water_weight1 + water_weight2) / 2, avg_specific_gravity]
-                func.write_csv( "test_data.csv", [dat] )
-            else:
-                print("No tare file found. Please tare first.")
-        
-        # Measure weight of basket (tare) automatically
-        elif option == "3":
-            # Find tare
-            air_tare1, air_tare2, water_tare1, water_tare2 = grav.measure_tare()
-
-            # Save data to file
-            tare_dict = {"Air1": air_tare1, "Air2": air_tare2, "Water1": water_tare1, "Water2": water_tare2}
-            with open('tare.json', 'w') as file:
-                json.dump(tare_dict, file, indent=4)
-        
-        # Input tare values manually
-        elif option == "4":
-            # Input tare values
-            air_tare1   = input("Enter out-of-water tare for load cell 1: ").strip()
-            air_tare2   = input("Enter out-of-water tare for load cell 2: ").strip()
-            water_tare1 = input("Enter in-water tare for load cell 1: ").strip()
-            water_tare2 = input("Enter in-water tare for load cell 2: ").strip()
-
-            # Save data to file
-            if air_tare1.replace('.', '', 1).isnumeric() and air_tare2.replace('.', '', 1).isnumeric() and water_tare1.replace('.', '', 1).isnumeric() and water_tare2.replace('.', '', 1).isnumeric():
-                tare_dict = {"Air1": float(air_tare1), "Air2": float(air_tare2), "Water1": float(water_tare1), "Water2": float(water_tare2)}
-                with open('tare.json', 'w') as file:
-                    json.dump(tare_dict, file, indent=4)
-            else:
-                print("Tare values must be numeric.")
-       
-        # Measure digital-to-grams conversion ratio of load cells
-        elif option == "5":
-            # Find ratio
-            if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0:
-                with open('tare.json', 'r') as file:
-                    tare_dict = json.load(file)
-                known_weigtht = input("Enter known weight of object in basket (grams): ").strip()
-                if known_weigtht.replace('.', '', 1).isnumeric():
-                    ratio1, ratio2 = grav.measure_ratio(float(known_weigtht), tare_dict['Air1'], tare_dict['Air2'])
-
-                    # Save data to file
-                    ratio_dict = {"Ratio1": ratio1, "Ratio2": ratio2}
-                    with open('ratio.json', 'w') as file:
-                        json.dump(ratio_dict, file, indent=4)
-                else:
-                    print("Known weight must be numeric.")
-            else:
-                print("No tare file found. Please calibrate tare first.")
-
-        # Input conversion ratio manually
-        elif option == "6":
-            # Input ratio values
-            ratio1 = input("Enter conversion ratio for load cell 1: ").strip()
-            ratio2 = input("Enter conversion ratio for load cell 2: ").strip()
-
-            # Save data to file
-            if ratio1.replace('.', '', 1).isnumeric() and ratio2.replace('.', '', 1).isnumeric():
-                ratio_dict = {"Ratio1": float(ratio1), "Ratio2": float(ratio2)}
-                with open('ratio.json', 'w') as file:
-                    json.dump(ratio_dict, file, indent=4)
-            else:
-                print("Ratio values must be numeric.")
-     
-        # Reset position of basket
-        elif option == "7":
-            grav.motor_control("Vertical Up")
-            grav.motor_control("Rotational In")
-       
-        # Call test functions
-        elif option ==  "8":
-            test_options(option)
-        
-        # Exit program
-        elif option.lower() in ["9", "q", "e", "quit", "exit", "end"]:
-            break
-
-        # Call help function
-        elif option.split(" ")[0] == "help":
-            help_options(option)
-  
-        else:
-            print("Invalid Input.")
-
-'''
 """
 Test options function that prints the test menu and gets an input from the user.
 Calls the corresponding test function for the option chosen.
@@ -301,32 +139,17 @@ def test_options(option):
           "9) Go back to main screen\n")
     test_option = input("Select an option: ").strip()
     print("\n\n")
-    if test_option == "1":
-        test.test_camera_picture()
 
-    elif test_option == "2":
-        pass
+    if test_option == "1": test.test_camera_picture()
+    elif test_option == "2": pass
+    elif test_option == "3": pass            
+    elif test_option == "4": test.test_servo_motor()
+    elif test_option == "5": test.test_load_cell()
+    elif test_option == "6": test.test_stepper_motor()
+    elif test_option == "7": test.test_limit_switch()
+    elif test_option.lower() in ["9", "b", "back"]: return
+    else: print("Invalid Input.")
 
-    elif test_option == "3":
-        test.test_ir_sensor()            
-
-    elif test_option == "4":
-        test.test_servo_motor()
-
-    elif test_option == "5":
-        test.test_load_cell()
-
-    elif test_option == "6":
-        test.test_stepper_motor()
-
-    elif test_option == "7":
-        test.test_limit_switch()
-
-    elif test_option.lower() in ["9", "b", "back"]:
-        return
-
-    else:
-        print("Invalid Input.")
     return
 
 
@@ -407,7 +230,7 @@ def help_options(option):
         # "help 9"
         elif option.split(" ")[1] == "9":
             print("\n\n9) Exit\n"
-                  "Stops the program. The program can be started again by [explanation]\n"
+                  "Stops the program. The program can be started again by reopening the terminal. \n"
                   "This system is intended to be kept on, so shutting the system off before each test is NOT required.")
         else:
             print("Invalid Input.")
