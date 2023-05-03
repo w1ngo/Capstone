@@ -19,17 +19,16 @@ def motor_control(motor):
         GPIO.setup(STEP, GPIO.OUT)
         GPIO.setup(LS, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-        GPIO.output(DIR, CW)    # TEMP VALUE (CW): Change to downwards direction
+        GPIO.output(DIR, CW)
         sleep(1)
-        # for i in range(200):    # TEMP VALUE (200): Number of steps, affects how far motor rotates
         queue = [1,1,1]
         while any(queue): 
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.00025)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.00015)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.00025) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.00005) # TEMP VALUE (0.005): Affects PWM LOW duration
 
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 1
             #    break
@@ -52,9 +51,9 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.00025)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.00015)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.00025) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.00005) # TEMP VALUE (0.005): Affects PWM LOW duration
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 2
             #    break
 
@@ -76,9 +75,9 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.004)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.003)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.004) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.001) # TEMP VALUE (0.005): Affects PWM LOW duration
             
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 3
             #    break
@@ -101,9 +100,9 @@ def motor_control(motor):
             queue.pop(0)
             queue.append(GPIO.input(LS))
             GPIO.output(STEP, GPIO.HIGH)
-            sleep(0.004)  # TEMP VALUE (0.005): Affects PWM HIGH duration
+            sleep(0.003)  # TEMP VALUE (0.005): Affects PWM HIGH duration
             GPIO.output(STEP, GPIO.LOW)
-            sleep(0.004) # TEMP VALUE (0.005): Affects PWM LOW duration
+            sleep(0.001) # TEMP VALUE (0.005): Affects PWM LOW duration
             
             # if GPIO.input(0):  # TEMP VALUE (0): Limit switch 4
             #    break

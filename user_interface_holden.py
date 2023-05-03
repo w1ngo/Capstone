@@ -4,6 +4,7 @@ import test_functions as test
 import json
 import os
 import RPi.GPIO as GPIO
+from time import sleep
 
 def greeting():
     reset_position()
@@ -35,6 +36,7 @@ def tare_scale():
 
 def calibrate_scale():
     known_weigtht = input("Enter known weight of object in basket (grams): ").strip()
+    with open('tare.json', 'r') as file: tare_dict = json.load(file)
     ratio1, ratio2 = grav.measure_ratio(float(known_weigtht), tare_dict['Air1'], tare_dict['Air2'])
 
     # Save data to file
@@ -61,8 +63,8 @@ def gravitometer(id):
         specific_gravity = air_w2 / (air_w2 - wet_w2)
 
         grav.motor_control("Vertical Up")
-        grav.motor_control("Rotational Out")
         print("If stuck, slowly rotate the arm counter-clockwise until you hear a click")
+        grav.motor_control("Rotational Out")
         _ = input("Press enter when the potatoes are dumped...")
         grav.motor_control("Rotational In")
 
@@ -70,9 +72,6 @@ def gravitometer(id):
 
     # if one of the if conditions failed:
     print("Necessary scale calibration data not present, running calibration") 
-
-    tare_scale()
-    print( "Tare data identified. Now calibrating weight conversion factor")
 
     calibrate_scale()
     gravitometer(id)
@@ -94,7 +93,7 @@ def run():
         print("Gravitometer selected")
         while True:
             if input("Ready for a trial? [Y/n] ") in ("Y", "y"):
-                print("Starting trial.")
+                print("Starting trial. If you have not already, load tubers in the basket")
                 code = func.read_barcode()
                 length = "NA"
                 width  = "NA"
@@ -105,6 +104,8 @@ def run():
                     width  = input("Width (cm): ")
                     thick  = input("Thickness (cm): ")
 
+                reset_position()
+                sleep(1)
                 print("Starting weight measurements")
                 air, wet, sg = gravitometer(code)
                 
@@ -133,6 +134,7 @@ def run():
                     if fileType == "1":
                         filename = input("Enter your desired filename, excluding the file extension: ")
                         with open(f"/media/ag/{folder}/{filename}.csv", "w") as f:
+                            f.write("Plot, Weight out(g), Weight in(g), Length(cm), Width(cm), Thickness(cm), Specific Gravity, Check\n")
                             for line in data:
                                 f.write(line)
                         print("File write complete. Exiting program now...")
@@ -156,16 +158,16 @@ def run():
 
                         else:
                             print( "Excel spreadsheet detected, based on the file extension. Depending on the size of the file, the write process may be slow." )
-
-                        
+                            sheet_name = input( "Input the sheet name you would like to append to, or just press enter to write to the first sheet: " )
+                            if sheet_name == "": sheet_name = 0
+                            frame = func.read_excel_file(f,sheet_name)
+                            print(frame)
 
                 print("Input not recognized. Please enter the digit 1 or the digit 2.")
             
 
-    if option == 2:
-        # gravitometer and dimentiometer
-        # Currently unsupported
-        print( "This option is not currently supported. Aborting..." )
+    # gravitometer & dimentiometer
+    if option == 2: print( "This option is not currently supported. Aborting..." )
 
 
 
