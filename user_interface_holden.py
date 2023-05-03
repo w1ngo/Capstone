@@ -111,7 +111,8 @@ def run():
                         pass
                     
                     if fileType == "2":
-                        pass
+                        func.mount_drive()
+                        print("The files available on the detected drive are listed here: ")
 
                 print("Input not recognized. Please enter the digit 1 or the digit 2.")
             
