@@ -5,13 +5,119 @@ import test_functions as test
 import json
 import os.path
 import RPi.GPIO as GPIO
+from subprocess import Popen
 
-"""
-User interface function that prints the main menu and gets an input from the user.
-Calls the required functions based on the option chosen.
-"""
+def greeting():
+    subprocess.Popen("clear")
+    print( "Welcome to the Agrilife Tuber Analysis System!" )
+    print( "______________________________________________" )
+    print( "What procedures will be performed during this trial?\n"
+           "1) specific gravity only (Gravitometer)\n"
+           "2) specific gravity and dimension measurement (Dimentiometer)\n" )
+    
+    while True:
+        option = input( "Select an option: ")
+        if option == "1": return 1
+        if option == "2": return 2
+        print( "Please enter the digit 1 or the digit 2 to indicate the desired procedures\n" )
+    #ENDOF: greeting()
+
+
+def tare_scale():
+    _ = input("Press enter when the basket is empty, still, and ready to be calibrated")
+    air_tare1, air_tare2, water_tare1, water_tare2 = grav.measure_tare()
+    tare_dict = {"Air1": air_tare1, "Air2": air_tare2, "Water1": water_tare1, "Water2": water_tare2}
+    with open('tare.json', 'w') as file: json.dump(tare_dict, file, indent=4)
+    #ENDOF: tare_scale()
+
+
+def calibrate_scale():
+    known_weigtht = input("Enter known weight of object in basket (grams): ").strip()
+    ratio1, ratio2 = grav.measure_ratio(float(known_weigtht), tare_dict['Air1'], tare_dict['Air2'])
+
+    # Save data to file
+    ratio_dict = {"Ratio1": ratio1, "Ratio2": ratio2}
+    with open('ratio.json', 'w') as file: json.dump(ratio_dict, file, indent=4)
+    #ENDOF: calibrate_scale()
+
+
+def gravitometer(id=func.read_barcode()):
+    if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 \
+       and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
+        with open('tare.json', 'r') as file: tare_dict   = json.load(file)
+        with open('ratio.json', 'r') as file: ratio_dict = json.load(file)
+
+        # measure air-weight
+        air_w1, air_w2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+        # Measure weight in water
+        
+        grav.motor_control("Vertical Down")
+        wet_w1, wet_w2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+        # Calculate specific gravity
+        sg1 = air_w1 / (air_w1 - wet_w1)
+        sg2 = air_w2 / (air_w2 - water_w2)
+        specific_gravity = (sg1 + sg2) / 2
+
+        grav.motor_control("Vertical Up")
+        grav.motor_control("Rotational Out")
+        while True:
+            if input("Press enter when the potatoes are dumped..."): break
+        grav.motor_control("Rotational In")
+
+        return id, air_w, wet_w, specific_gravity
+
+    # if one of the if conditions failed:
+    print("Necessary scale calibration data not present, running calibration") 
+
+    tare_scale()
+    print( "Tare data identified. Now calibrating weight conversion factor")
+
+    calibrate_scale()
+    subprocess.Popen("clear")
+
+    gravitometer(id)
+    #ENDOF: gravitometer()
+
+
 def run():
     GPIO.setwarnings(False)
+
+    option = greeting()
+    if option == 1:
+        # gravitometer only
+        while True:
+            if input("Ready for another trial? [Y/n] ") in ("Y", "y"):
+                gravitometer()
+                continue
+            
+            # if the user did not indicate "yes", then exit
+            subprocess.Popen("clear")
+
+            while True:
+                write_option = input("Enter 1 to write data to a new .csv, or 2 to add to the end of an existing file")
+
+                if write_option == "1":
+                    filename = input("Enter your desired filename (leave off the .csv): ")
+
+
+                if write_option == "2":
+                    pass
+
+                print("Input not recognized. Please enter the digit 1 or the digit 2.")
+            
+
+
+    if option == 2:
+        # gravitometer and dimentiometer
+        # Currently unsupported
+        print( "This option is not currently supported. Aborting..." )
+
+
+
+
+def run():
     while(True):
         print("\n\nTuber Analysis System\n"
               "-----------------------------------------------------\n"
