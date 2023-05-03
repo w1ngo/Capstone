@@ -7,7 +7,11 @@ import RPi.GPIO as GPIO
 
 def greeting():
     reset_position()
-    print( "Welcome to the Agrilife Tuber Analysis System!" )
+    
+    if input("Would you like to zero the scale? [Y/n] ") in ("Y", "y"):
+        tare_scale()
+
+    print( "\n\nWelcome to the Agrilife Tuber Analysis System!" )
     print( "______________________________________________" )
     print( "What procedures will be performed during this trial?\n"
            "1) specific gravity only (Gravitometer)\n"
@@ -58,6 +62,7 @@ def gravitometer(id):
 
         grav.motor_control("Vertical Up")
         grav.motor_control("Rotational Out")
+        print("If stuck, slowly rotate the arm counter-clockwise until you hear a click")
         _ = input("Press enter when the potatoes are dumped...")
         grav.motor_control("Rotational In")
 
@@ -84,31 +89,50 @@ def run():
     GPIO.setwarnings(False)
     option = greeting()
     if option == 1:
+        data = []
+
         print("Gravitometer selected")
         while True:
             if input("Ready for a trial? [Y/n] ") in ("Y", "y"):
                 print("Starting trial.")
                 code = func.read_barcode()
+                length = "NA"
+                width  = "NA"
+                thick  = "NA"
+                
+                if input("Input length, width, and thickness data? [Y/n] ") in ("Y", "y"):
+                    length = input("Length (cm): ")
+                    width  = input("Width (cm): ")
+                    thick  = input("Thickness (cm): ")
+
+                print("Starting weight measurements")
                 air, wet, sg = gravitometer(code)
+                
+                condition = "OK"
+                if sg < 1.055: condition = "LOW"
+                if sg > 1.07 : condition = "HIGH"
+
+                data.append(f"{code},{air},{wet},{length},{width},{thick},{sg},{condition}\n")
                 continue
             
             # if the user did not indicate "yes", then record data and exit
             while True:
-                op = input("Enter 1 to recalibrate, or 2 to store data and exit. ")
+                op = input("Enter 1 to recalibrate, or 2 to store data and exit: ")
 
                 if op == "1":
                     tare_scale()
                     print("Scale has been rezeroed.")
-                    if input("Would you like to recalibrate with a known weight? [Y/n]") in ("Y", "y"):
+                    if input("Would you like to recalibrate with a known weight? [Y/n] ") in ("Y", "y"):
                         calibrate_scale()
                         print("Scale has been recalibrated")
                     break
 
                 if op == "2":
-                    fileType = input("Enter 1 to write to a new csv, or 2 to add onto an exiting file")
+                    folder = [item for item in os.listdir("/media/ag") if os.path.isdir(f"/media/ag/{item}")][0]
+                    fileType = input("Enter 1 to write to a new csv, or 2 to add onto an exiting file: ")
                     if fileType == "1":
                         filename = input("Enter your desired filename, excluding the file extension: ")
-                        with open(filename, "w") as f:
+                        with open(f"/media/ag/{folder}/{filename}.csv", "w") as f:
                             for line in data:
                                 f.write(line)
                         print("File write complete. Exiting program now...")
@@ -117,16 +141,15 @@ def run():
                     
                     if fileType == "2":
                         print("The files available on the detected drive are listed here: ")
-                        folder = [ item for item in os.listdir("/media/ag") if os.path.isdir(f"/media/ag/{item}") ][0]
                         print( [ filename for filename in os.listdir(f"/media/ag/{folder}") if ".csv" in filename or ".xlsx" in filename or ".xls" in filename ] )
 
                         f = input( "Enter the filename, along with the extension, that you would like to append to: " )
 
                         if ".csv" in f:
                             print( "CSV-type detected, based on the file extension.")
-                            with open(f, "a") as f:
+                            with open(f"/media/ag/{folder}/{f}", "a") as fil:
                                 for line in data:
-                                    f.write(line)
+                                    fil.write(line)
                             print("File write complete. Exiting program now...")
                             return
 
