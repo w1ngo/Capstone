@@ -5,11 +5,12 @@ import json
 import os
 import RPi.GPIO as GPIO
 from time import sleep
+from subprocess import Popen
 
 def greeting():
     reset_position()
     
-    if input("Would you like to zero the scale? [Y/n] ") in ("Y", "y"):
+    if input("Would you like to zero the scale? [Y/n] ") in ("Y", "y", "yes", "Yes"):
         tare_scale()
 
     print( "\n\nWelcome to the Agrilife Tuber Analysis System!" )
@@ -92,14 +93,14 @@ def run():
 
         print("Gravitometer selected")
         while True:
-            if input("Ready for a trial? [Y/n] ") in ("Y", "y"):
+            if input("Ready for a trial? [Y/n] ") in ("Y", "y", "yes", "Yes"):
                 print("Starting trial. If you have not already, load tubers in the basket")
                 code = func.read_barcode()
                 length = "NA"
                 width  = "NA"
                 thick  = "NA"
                 
-                if input("Input length, width, and thickness data? [Y/n] ") in ("Y", "y"):
+                if input("Input length, width, and thickness data? [Y/n] ") in ("Y", "y", "Yes", "yes"):
                     length = input("Length (cm): ")
                     width  = input("Width (cm): ")
                     thick  = input("Thickness (cm): ")
@@ -114,6 +115,8 @@ def run():
                 if sg > 1.07 : condition = "HIGH"
 
                 data.append(f"{code},{air},{wet},{length},{width},{thick},{sg},{condition}\n")
+                print(f"Calculated specific gravity: {sg}" )
+
                 continue
             
             # if the user did not indicate "yes", then record data and exit
@@ -123,7 +126,7 @@ def run():
                 if op == "1":
                     tare_scale()
                     print("Scale has been rezeroed.")
-                    if input("Would you like to recalibrate with a known weight? [Y/n] ") in ("Y", "y"):
+                    if input("Would you like to recalibrate with a known weight? [Y/n] ") in ("Y", "y", "Yes", "yes"):
                         calibrate_scale()
                         print("Scale has been recalibrated")
                     break
@@ -137,7 +140,8 @@ def run():
                             f.write("Plot, Weight out(g), Weight in(g), Length(cm), Width(cm), Thickness(cm), Specific Gravity, Check\n")
                             for line in data:
                                 f.write(line)
-                        print("File write complete. Exiting program now...")
+                        print("File write complete. Raw output shown below. Exiting program now...")
+                        Popen(f"cat /media/ag/{folder}/{filename}.csv".split())
                         return
 
                     
@@ -152,7 +156,8 @@ def run():
                             with open(f"/media/ag/{folder}/{f}", "a") as fil:
                                 for line in data:
                                     fil.write(line)
-                            print("File write complete. Exiting program now...")
+                            print("File write complete. Raw output shown below. Exiting program now...")
+                            Popen(f"cat /media/ag/{folder}/{f}".split())
                             return
 
 
