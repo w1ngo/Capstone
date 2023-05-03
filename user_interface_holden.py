@@ -1,9 +1,8 @@
-import dimentiometer_functions as dim
 import gravitometer_functions as grav
 import peripheral_functions as func
 import test_functions as test
 import json
-import os.path
+import os
 import RPi.GPIO as GPIO
 
 def greeting():
@@ -108,11 +107,34 @@ def run():
                 if op == "2":
                     fileType = input("Enter 1 to write to a new csv, or 2 to add onto an exiting file")
                     if fileType == "1":
-                        pass
+                        filename = input("Enter your desired filename, excluding the file extension: ")
+                        with open(filename, "w") as f:
+                            for line in data:
+                                f.write(line)
+                        print("File write complete. Exiting program now...")
+                        return
+
                     
                     if fileType == "2":
-                        func.mount_drive()
                         print("The files available on the detected drive are listed here: ")
+                        folder = [ item for item in os.listdir("/media/ag") if os.path.isdir(f"/media/ag/{item}") ][0]
+                        print( [ filename for filename in os.listdir(f"/media/ag/{folder}") if ".csv" in filename or ".xlsx" in filename or ".xls" in filename ] )
+
+                        f = input( "Enter the filename, along with the extension, that you would like to append to: " )
+
+                        if ".csv" in f:
+                            print( "CSV-type detected, based on the file extension.")
+                            with open(f, "a") as f:
+                                for line in data:
+                                    f.write(line)
+                            print("File write complete. Exiting program now...")
+                            return
+
+
+                        else:
+                            print( "Excel spreadsheet detected, based on the file extension. Depending on the size of the file, the write process may be slow." )
+
+                        
 
                 print("Input not recognized. Please enter the digit 1 or the digit 2.")
             
