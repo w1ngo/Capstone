@@ -80,14 +80,15 @@ def test_servo_motor():
     
 
 def test_load_cell():
+    GPIO.setmode(GPIO.BCM)
     while True:
         print("1) Raw output\n"
               "2) Final weight\n"
               "3) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            hx1 = HX711(dout_pin=14, pd_sck_pin=4, gain_channel_A=128)  # Create hx711 object for load cell 1
-            hx2 = HX711(dout_pin=15, pd_sck_pin=17, gain_channel_A=128)  # Create hx711 object for load cell 2
+            hx1 = HX711(dout_pin=14, pd_sck_pin=4)  # Create hx711 object for load cell 1
+            hx2 = HX711(dout_pin=15, pd_sck_pin=17)  # Create hx711 object for load cell 2
             print("LC1: ", hx1.get_raw_data_mean(readings=30), "\nLC2: ", hx2.get_raw_data_mean(readings=30), "\n")
         elif option == "2":
             if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
@@ -99,6 +100,7 @@ def test_load_cell():
                 print("LC1:", air_weight1, "\nLC2: ", air_weight2, "\n")
         else:
             break
+    GPIO.cleanup()
 
 
 def test_stepper_motor():
@@ -114,14 +116,14 @@ def test_stepper_motor():
         elif option == "2":
             grav.motor_control("Vertical Up")
         elif option == "3":
-            grav.motor_control("Vertical Up")
+            #grav.motor_control("Vertical Up")
             grav.motor_control("Rotational Out")
         elif option == "4":
-            grav.motor_control("Vertical Up")
+            #grav.motor_control("Vertical Up")
             grav.motor_control("Rotational In")
         else:
-            grav.motor_control("Vertical Up")
-            grav.motor_control("Rotational In")
+            #grav.motor_control("Vertical Up")
+            #grav.motor_control("Rotational In")
             break
 
 
@@ -131,16 +133,22 @@ def test_limit_switch():
             "2) Return to main screen\n")
         option = input("Select an option: ").strip()
         if option == "1":
-            LS1 = 23    # Down
-            LS2 = 7     # Up
+            LS1 = 24    # Down
+            LS2 = 23     # Up
             LS3 = 19    # Out
-            LS4 = 26    # In
+            LS4 = 26   # In
             GPIO.setmode(GPIO.BCM)
             GPIO.setup(LS1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
             GPIO.setup(LS4, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-            print("LS1 (Down): ", GPIO.input(LS1), "\nLS2 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
-            GPIO.cleanup()
+            while True:
+
+                print("LS2 (Down): ", GPIO.input(LS1), "\nLS1 (Up): ", GPIO.input(LS2), "\nLS3 (Out): ", GPIO.input(LS3), "\nLS4 (In): ", GPIO.input(LS4), "\n")
+                sleep(1)
         else:
-            break
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(7, GPIO.OUT)
+            while True:
+                GPIO.output(7, GPIO.HIGH)
+
