@@ -29,81 +29,12 @@ def run():
         
         # Run Dimentiometer & Gravitometer
         if option == "1":  
-            # Check if tare and ratio files exist and aren't empty
-            if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
-                #for i in range(10):  # Loop for each potato
-                    #top_values = dim.take_picture("Top")
-                    #side_values = dim.take_picture("Side")
-
-
-                    # Edge Detection
-                    # Measure Potato
-                
-                # Get tare
-                with open('tare.json', 'r') as file:
-                    tare_dict = json.load(file)
-
-                # Get ratio
-                with open('ratio.json', 'r') as file:
-                    ratio_dict = json.load(file)
-
-                # Measure weight in air
-                air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-                
-
-                # Measure weight in water
-                grav.motor_control("Vertical Down")
-                water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Calculate specific gravity
-                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
-                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
-                #avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
-                print(specific_gravity1, specific_gravity2)
-                grav.motor_control("Vertical Up")
-                # potential sleep
-                grav.motor_control("Rotational Out")
-                # potential sleep
-                grav.motor_control("Rotational In")
-                # Store data
-            else:
-                print("No tare file found. Please calibrate tare first.")
+            run_dimentiometer()
+            run_gravitometer()
 
         # Run Gravitometer Only
         elif option == "2":
-            if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
-                # Get tare
-                with open('tare.json', 'r') as file:
-                    tare_dict = json.load(file)
-
-                # Get ratio
-                with open('ratio.json', 'r') as file:
-                    ratio_dict = json.load(file)
-
-                # Measure weight in air
-                air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Measure weight in water
-                grav.motor_control("Vertical Down")
-                water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
-
-                # Calculate specific gravity
-                specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
-                specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
-                avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
-                print(specific_gravity2)
-
-                grav.motor_control("Vertical Up")
-                # potential sleep
-                grav.motor_control("Rotational Out")
-                # potential sleep
-                grav.motor_control("Rotational In")
-
-                # Store data
-                dat = ["test_label", (air_weight1 + air_weight2) / 2, (water_weight1 + water_weight2) / 2, avg_specific_gravity]
-                func.write_csv( "test_data.csv", [dat] )
-            else:
-                print("No tare file found. Please tare first.")
+            run_gravitometer()
         
         # Measure weight of basket (tare) automatically
         elif option == "3":
@@ -183,6 +114,48 @@ def run():
   
         else:
             print("Invalid Input.")
+
+def run_dimentiometer():
+    print("This system is not currently supported.\n")
+    return 
+
+
+def run_gravitometer():
+    if os.path.isfile('tare.json') and os.path.getsize('tare.json') > 0 and os.path.isfile('ratio.json') and os.path.getsize('ratio.json') > 0:
+        # Get tare
+        with open('tare.json', 'r') as file:
+            tare_dict = json.load(file)
+
+        # Get ratio
+        with open('ratio.json', 'r') as file:
+            ratio_dict = json.load(file)
+
+        # Measure weight in air
+        air_weight1, air_weight2 = grav.read_load_cell(tare_dict['Air1'], tare_dict['Air2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+        # Measure weight in water
+        grav.motor_control("Vertical Down")
+        water_weight1, water_weight2 = grav.read_load_cell(tare_dict['Water1'], tare_dict['Water2'], ratio_dict['Ratio1'], ratio_dict['Ratio2'])
+
+        # Calculate specific gravity
+        #specific_gravity1 = air_weight1 / (air_weight1 - water_weight1)
+        specific_gravity2 = air_weight2 / (air_weight2 - water_weight2)
+        #avg_specific_gravity = (specific_gravity1 + specific_gravity2) / 2
+        print(specific_gravity2)
+
+        grav.motor_control("Vertical Up")
+        # potential sleep
+        grav.motor_control("Rotational Out")
+        # potential sleep
+        grav.motor_control("Rotational In")
+
+        # Store data
+        dat = ["test_label", (air_weight2), (water_weight2), specific_gravity2]
+        func.write_csv( "test_data.csv", [dat] )
+    else:
+        print("No tare file found. Please tare first.")
+
+    return
 
 
 """
