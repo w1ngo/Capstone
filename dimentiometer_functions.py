@@ -5,8 +5,8 @@ from time import sleep
 
 """
 Function for capturing an image with the USB cameras.
+UNUSED FUNCTION: Use take_pic() function from peripheral_functions.py instead
 """
-
 def take_picture(camera):
     IR = 22
     GPIO.setmode(GPIO.BCM)
