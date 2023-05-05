@@ -3,10 +3,21 @@ from time import sleep
 from hx711 import HX711
 
 
-"""
-Function for controlling stepper motors on the Gravitometer.
-Stepper 1 is vertical and stepper 2 is rotational.
-"""
+'''
+This function controls the stepper motors on the Gravitometer. The motors
+    are used to move and rotate the basket. Stepper 1 is vertical and 
+    stepper 2 is rotational. Limit switches are used to stop the motor
+    when the basket reaches the desired position.
+
+It accepts one parameter, a string that represents the desired direction.
+Possible directions include:
+    - Vertical Down
+    - Vertical Up
+    - Rotational Out
+    - Rotational In
+
+It returns True if successful and False if the input parameter is invalid
+'''
 def motor_control(motor):
     CW = 1
     CCW = 0
@@ -114,10 +125,17 @@ def motor_control(motor):
     return True
 
 
-"""
-Function to read load cell value and calculate weight.
-Returns weight of load cell 1 and 2.
-"""
+'''
+This function reads the load cells and calculates the weight in the basket.
+    An HX711 library is used to get raw readings from the load cells.
+
+Requires a tare parameter for each load cell.
+Requires a conversion ratio for each load cell.
+
+It returns weight measured by both load cells. The weight is calculated by
+    finding the difference between the raw reading and basket tare parameter,
+    which is then divided by the ratio parameter.
+'''
 def read_load_cell(tare1, tare2, ratio1, ratio2):
     GPIO.setmode(GPIO.BCM)
 
@@ -137,10 +155,15 @@ def read_load_cell(tare1, tare2, ratio1, ratio2):
 
     return weight1, weight2
 
-"""
-Function to measure basket tare weight in air and water.
-Returns tare in air and water of load cell 1 and 2.
-"""
+'''
+This function measures basket tare weight in air and water. This value
+    is used to zero the scale. An HX711 library is used to get raw readings 
+    from the load cells.
+
+Accepts no input parameters.
+
+It returns the tare weight in air and water of both load cells
+'''
 def measure_tare():
     GPIO.setmode(GPIO.BCM)
 
@@ -164,10 +187,16 @@ def measure_tare():
     return air_tare1, air_tare2, water_tare1, water_tare2
 
 
-"""
-Function to measure the digital to grams conversion ratio of the load cells.
-Returns the ratio of load cell 1 and 2.
-"""
+'''
+This function measures the digital to grams conversion ratio of the load cells.
+    This value is used to calibrate the scale to output weight in grams.
+    An HX711 library is used to get raw readings from the load cells.
+
+Requires a float parameter "known_weight", which the user manually enters.
+Requires a tare paremter for both load cells.
+
+Returns the ratio of both load cells.
+'''
 def measure_ratio(known_weight, tare1, tare2):
     GPIO.setmode(GPIO.BCM)
 

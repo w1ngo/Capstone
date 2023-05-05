@@ -3,10 +3,10 @@ import cv2
 from time import sleep
 
 
-"""
+'''
 Function for capturing an image with the USB cameras.
 UNUSED FUNCTION: Use take_pic() function from peripheral_functions.py instead
-"""
+'''
 def take_picture(camera):
     IR = 22
     GPIO.setmode(GPIO.BCM)
@@ -20,7 +20,7 @@ def take_picture(camera):
     if camera == "Top":
         for i in range(10):
             check, frame = camera_top.read()  # starts video capture
-            # cv2.imshow("camera_top", frame)  # shows video recording output, uncomment for testing
+            #cv2.imshow("camera_top", frame)  # shows video recording output, uncomment for testing
             cv2.waitKey(1)  # time in ms between each frame
 
         cv2.imwrite('top_pic.jpg', frame)
@@ -31,7 +31,7 @@ def take_picture(camera):
     elif camera == "Side":
         for i in range(10):
             check, frame = camera_side.read()
-            # cv2.imshow("camera_side", frame)
+            #cv2.imshow("camera_side", frame)
             cv2.waitKey(1)
 
         cv2.imwrite('side_pic.jpg', frame)
@@ -45,12 +45,12 @@ def take_picture(camera):
     return gray_pic  # Currently returns 2D list
 
 
-"""
+'''
 Function for opening and closing the trapdoor on the Dimentiometer.
 The trapdoor is controlled by a servo motor.
 
 Duty cycle values depend on motor.
-"""
+'''
 def trapdoor_control(option):
     servoPIN = 27
     GPIO.setmode(GPIO.BCM)
