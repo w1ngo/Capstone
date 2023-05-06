@@ -4,17 +4,28 @@ This repo will store the drivers written for all embedded systems used for the
 	which serves as the computation hub and uses a derivative of the Debian 
 	Linux distribution
 
-___________________________________________________________________________________
-
+________________________________________________________________________________________
 Customized files are written to automate some processes when the shell is 
     initiated. The custom .bashrc (startup procedure) will have our code attached,
     so the user should only have to open a shell or command line and login to start 
     the program.
 
-In order to use this repo successfully, clone the repository onto your host machine. 
-Sourcing the init.sh script will update the device and install the required packages.
+**In order to use this repo successfully, clone the repository onto your host machine. 
+Sourcing the init.sh script will update the device and install the required packages. 
+It will print a message about how to install the one package that cannot be auto-installed.
+After that, your device should be configured properly. **
 ________________________________________________________________________________________
-Conceptual/Info on software:
+Info on Gravitometer software:
+
+The Gravitometer software is mainly comprised of motor controls and ADC readings. There 
+	is not much data processing or computationally heavy operations to do, relative
+	to the Dimentiometer section. Functions have been written to handle motor controls,
+	load cell controls, file reading and writing, and terminal I/O. Should this project
+	be built upon or modified later, usage of these functions should reduce the amount
+	of time needed to make changes due to their modular nature.
+
+________________________________________________________________________________________
+Conceptual/Info on Camera software:
 
 The edge detection portion of this software is based entirely on opencv. It uses their
 	implementations of data structures, blurring functions, and the Canny edge 
@@ -65,7 +76,7 @@ Data storage is done using a .csv filetype and written to a flashdrive connected
 	time, a .swp file will be used to avoid corrupting the main file, and 
 	files will be kept closed as much as possible.
 
-_____________________________________________________________________________________
+________________________________________________________________________________________
 Things to keep in mind
 
 Due to the highly specified application of the edge detection software, deviations in
