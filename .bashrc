@@ -55,3 +55,7 @@ if test -f "./bash_history"; then
 fi
 
 PS1="\[\033[1;35m\]\u@\W ->\[\033[32m\] "
+
+clear
+cd ~/Capstone
+py user_interface_holden.py
