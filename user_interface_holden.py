@@ -1,6 +1,6 @@
-import gravitometer_functions as grav
-import peripheral_functions as func
-import test_functions as test
+from functions import gravitometer_functions as grav
+from functions import peripheral_functions as func
+from functions import test_functions as test
 import json
 import os
 import RPi.GPIO as GPIO
